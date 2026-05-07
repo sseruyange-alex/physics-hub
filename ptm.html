@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Interactive Learning Hub — PTM3202 GROUP NAME</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════ */
+:root {
+  --bg: #f7f8fc;
+  --surface: #ffffff;
+  --surface2: #f0f2f8;
+  --border: #e2e6f0;
+  --text: #0f1623;
+  --text2: #4a5568;
+  --text3: #9ca3af;
+  --blue: #2563eb;
+  --blue-light: #3b82f6;
+  --blue-dim: rgba(37,99,235,0.08);
+  --indigo: #4f46e5;
+  --violet: #7c3aed;
+  --violet-dim: rgba(124,58,237,0.08);
+  --teal: #0d9488;
+  --teal-dim: rgba(13,148,136,0.08);
+  --amber: #d97706;
+  --green: #16a34a;
+  --red: #dc2626;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --radius-lg: 22px;
+  --shadow: 0 2px 16px rgba(15,22,35,0.07);
+  --shadow-md: 0 8px 32px rgba(15,22,35,0.11);
+  --font: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Fraunces', serif;
+  --font-mono: 'Fira Code', monospace;
+  --ease: cubic-bezier(0.4,0,0.2,1);
+  --nav-h: 66px;
+  /* dark */
+  --dk-bg: #0b0e17;
+  --dk-surface: #141824;
+  --dk-surface2: #1c2236;
+  --dk-border: #252d45;
+  --dk-text: #e8edf8;
+  --dk-text2: #7b8db5;
+}
+body.dark {
+  --bg: var(--dk-bg);
+  --surface: var(--dk-surface);
+  --surface2: var(--dk-surface2);
+  --border: var(--dk-border);
+  --text: var(--dk-text);
+  --text2: var(--dk-text2);
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-md: 0 8px 40px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden;transition:background .3s,color .3s;min-height:100vh}
+img,canvas{max-width:100%}
+button{cursor:pointer;font-family:var(--font)}
+input[type=range]{max-width:100%;accent-color:var(--blue)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px}
+
+/* ══════════════ NAVBAR ══════════════ */
+#nav {
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  background:var(--surface);border-bottom:1px solid var(--border);
+  z-index:900;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;gap:10px;box-shadow:0 1px 10px rgba(0,0,0,0.05);
+  transition:background .3s,border-color .3s;
+}
+.nav-brand{display:flex;align-items:center;gap:11px;cursor:pointer;flex-shrink:0;text-decoration:none}
+.nav-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 3px 14px rgba(37,99,235,0.35);flex-shrink:0}
+.brand-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-0.01em;line-height:1.2}
+.brand-sub{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.09em;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:1px}
+.nl{padding:7px 13px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:600;border-radius:var(--radius-sm);transition:all .2s var(--ease);position:relative;white-space:nowrap;letter-spacing:.01em}
+.nl:hover{color:var(--text);background:var(--surface2)}
+.nl.active{color:var(--blue);background:var(--blue-dim)}
+.nl.active::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:16px;height:2px;border-radius:2px;background:var(--blue)}
+.nav-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.dark-btn{width:38px;height:38px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s}
+.dark-btn:hover{background:var(--surface)}
+.ham{display:none;flex-direction:column;gap:5px;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2)}
+.ham span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all .25s}
+.mob-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:899;padding:10px;flex-direction:column;gap:3px;box-shadow:var(--shadow-md)}
+.mob-menu.open{display:flex}
+.mob-link{padding:10px 14px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:600;border-radius:var(--radius-sm);text-align:left;transition:all .2s}
+.mob-link:hover,.mob-link.active{background:var(--blue-dim);color:var(--blue)}
+
+/* ══════════════ PAGES ══════════════ */
+.pg{display:none;min-height:calc(100vh - var(--nav-h));padding-top:var(--nav-h)}
+.pg.active{display:block}
+
+/* ══════════════ HOME HERO ══════════════ */
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#eef2ff 0%,#f8f7ff 40%,#ecfdf5 100%);
+  min-height:88vh;display:flex;align-items:center;justify-content:center;text-align:center;
+}
+body.dark .hero{background:linear-gradient(150deg,#0d1230 0%,#120e2a 40%,#091920 100%)}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.6}
+.hero-in{position:relative;z-index:2;padding:70px 24px 90px;max-width:700px;margin:0 auto}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.18);
+  border-radius:100px;padding:6px 18px;font-size:12px;color:var(--blue);
+  font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:28px;
+}
+.hero-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(2.4rem,8vw,5rem);
+  font-weight:900;line-height:1.05;
+  letter-spacing:-0.03em;color:var(--text);margin-bottom:18px;
+}
+.hero-title em{
+  font-style:italic;
+  background:linear-gradient(120deg,#2563eb,#7c3aed,#0d9488);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:clamp(14px,2.5vw,17px);color:var(--text2);line-height:1.8;max-width:540px;margin:0 auto 44px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-pr{padding:14px 30px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;letter-spacing:.02em;box-shadow:0 5px 22px rgba(37,99,235,.38);transition:all .22s var(--ease)}
+.btn-pr:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(37,99,235,.5)}
+.btn-ol{padding:14px 30px;background:transparent;color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;transition:all .22s var(--ease)}
+.btn-ol:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-dim);transform:translateY(-2px)}
+.hero-wave{position:absolute;bottom:0;left:0;right:0}
+
+/* stats strip */
+.stats-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:20px 24px}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{text-align:center;padding:16px 10px;border-radius:var(--radius);cursor:pointer;transition:all .2s}
+.stat:hover{background:var(--surface2)}
+.stat-n{font-family:var(--font-display);font-size:clamp(2rem,4vw,2.8rem);font-weight:900;color:var(--blue);line-height:1}
+.stat-l{font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
+
+/* home body */
+.home-body{background:var(--bg);padding-bottom:80px}
+.sec-wrap{max-width:900px;margin:0 auto;padding:52px 24px 0}
+.sec-label{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.sec-label-txt{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
+.mc{position:relative;border-radius:var(--radius-lg);padding:30px 26px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);box-shadow:var(--shadow);transition:all .25s var(--ease);overflow:hidden;text-align:left}
+.mc:hover{transform:translateY(-6px);box-shadow:var(--shadow-md)}
+.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.mc.bl::before{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+.mc.vi::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.mc.te::before{background:linear-gradient(90deg,#0d9488,#2dd4bf)}
+.mc-ico{width:54px;height:54px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:27px;margin-bottom:18px}
+.mc.bl .mc-ico{background:var(--blue-dim)}
+.mc.vi .mc-ico{background:var(--violet-dim)}
+.mc.te .mc-ico{background:var(--teal-dim)}
+.mc-name{font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.mc-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:18px}
+.mc-meta{display:flex;align-items:center;justify-content:space-between}
+.mc-topics{font-size:11px;color:var(--text3);font-weight:700}
+.mc-arr{font-size:18px;transition:transform .2s}
+.mc:hover .mc-arr{transform:translateX(5px)}
+.qk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+.qk{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:all .2s}
+.qk:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.qk-ico{font-size:30px;margin-bottom:12px}
+.qk-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+.qk-desc{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* ══════════════ COMMON ══════════════ */
+.pg-wrap{max-width:920px;margin:0 auto;padding:42px 24px 90px}
+.back-btn{display:inline-flex;align-items:center;gap:7px;background:var(--surface2);color:var(--text2);border:1.5px solid var(--border);border-radius:100px;padding:8px 20px;font-size:13px;font-weight:700;margin-bottom:28px;transition:all .2s}
+.back-btn:hover{color:var(--blue);border-color:var(--blue);background:var(--blue-dim)}
+.pg-hd{font-family:var(--font-display);font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;color:var(--text);margin-bottom:8px;letter-spacing:-0.02em}
+.pg-sub{font-size:14px;color:var(--text2);margin-bottom:36px;line-height:1.7;max-width:600px}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:20px;box-shadow:var(--shadow)}
+.card-ttl{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px}
+.card-sub{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:18px}
+
+/* tabs */
+.tabs{display:flex;gap:3px;background:var(--surface2);padding:4px;border-radius:10px;margin-bottom:22px;flex-wrap:wrap}
+.tab{flex:1;min-width:80px;padding:9px 11px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:700;border-radius:7px;transition:all .2s;white-space:nowrap;text-align:center}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--surface);color:var(--blue);box-shadow:var(--shadow)}
+.panel{display:none}
+.panel.active{display:block}
+
+/* content formatting */
+.formula-box{
+  background:linear-gradient(135deg,var(--blue),var(--indigo));
+  color:#fff;border-radius:var(--radius-sm);padding:14px 22px;
+  font-family:var(--font-mono);font-size:15px;letter-spacing:1px;
+  text-align:center;margin:14px 0;word-break:break-word;
+}
+.note-box{background:rgba(251,191,36,.09);border-left:4px solid #f59e0b;border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 16px;font-size:13px;color:var(--text2);line-height:1.7;margin:12px 0}
+.info-box{background:var(--blue-dim);border-left:4px solid var(--blue);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 16px;font-size:13px;color:var(--text);line-height:1.7;margin:12px 0}
+.ok-box{background:rgba(22,163,74,.08);border-left:4px solid var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 16px;font-size:13px;color:var(--text);line-height:1.7;margin:12px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;padding:5px 15px;font-size:12px;font-weight:700;color:var(--text2)}
+.cc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:18px 0}
+.cc{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all .2s}
+.cc:hover,.cc.open{border-color:var(--blue);background:var(--blue-dim)}
+.cc-head{display:flex;align-items:center;gap:12px}
+.cc-ico{width:38px;height:38px;border-radius:9px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.cc-name{font-size:14px;font-weight:700;color:var(--text)}
+.cc-fm{font-size:11px;color:var(--text2);font-family:var(--font-mono);margin-top:2px}
+.cc-body{display:none;font-size:13px;color:var(--text2);line-height:1.7;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.cc.open .cc-body{display:block}
+.laws{display:flex;flex-direction:column;gap:14px;margin:18px 0}
+.law{display:flex;gap:14px;align-items:flex-start;background:var(--surface2);border-radius:var(--radius);padding:16px}
+.law-n{width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.law-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.law-d{font-size:13px;color:var(--text2);line-height:1.65}
+.law-ex{display:inline-block;background:var(--blue-dim);color:var(--blue);border-radius:100px;padding:3px 12px;font-size:11px;font-weight:700;margin-top:8px}
+.calc-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin:18px 0}
+.calc-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.calc-lbl{font-size:13px;color:var(--text2);font-weight:600;min-width:200px;flex-shrink:0}
+.calc-val{font-size:13px;font-weight:700;color:var(--text);min-width:80px;text-align:right}
+.calc-res{background:var(--surface);border:1.5px solid var(--blue);border-radius:var(--radius-sm);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px}
+.calc-res-l{font-size:13px;color:var(--text2)}
+.calc-res-v{font-size:24px;font-weight:900;color:var(--blue);font-family:var(--font-display)}
+.scenario{background:var(--blue-dim);border:1.5px solid rgba(37,99,235,.15);border-radius:var(--radius);padding:18px;margin:14px 0}
+.scenario-q{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px;line-height:1.6}
+.scenario-btn{background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 20px;font-size:13px;font-weight:700}
+.scenario-ans{display:none;margin-top:12px;font-size:13px;color:var(--text);background:var(--surface);border-radius:var(--radius-sm);padding:12px 16px;line-height:1.7;border-left:3px solid var(--green)}
+.scenario-ans.show{display:block}
+.worked{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin:16px 0}
+.worked-ttl{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px}
+.worked-step{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start}
+.ws-n{background:var(--blue);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ws-t{font-size:13px;color:var(--text2);line-height:1.65}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:16px 0}
+.app{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;border:1.5px solid var(--border)}
+.app-ico{font-size:26px;margin-bottom:7px}
+.app-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.app-d{font-size:12px;color:var(--text2);line-height:1.6}
+.sum-box{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border-radius:var(--radius);padding:26px;margin:22px 0}
+.sum-t{font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:16px}
+.sum-i{display:flex;gap:10px;margin-bottom:8px;font-size:13px;line-height:1.65}
+.sum-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.6);flex-shrink:0;margin-top:5px}
+.prg-wrap{background:var(--border);border-radius:8px;height:6px;overflow:hidden;margin:8px 0}
+.prg-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--violet));transition:width .4s var(--ease)}
+
+/* Quiz styling */
+.quiz-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.q-track{flex:1;height:8px;background:var(--border);border-radius:8px;overflow:hidden;min-width:80px}
+.q-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:8px;transition:width .3s}
+.q-badge{background:var(--blue);color:#fff;border-radius:100px;padding:4px 14px;font-size:12px;font-weight:700;white-space:nowrap}
+.q-score{background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;padding:4px 14px;font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap}
+.timer{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;padding:5px 14px;font-size:13px;font-weight:700;color:var(--text);font-family:var(--font-mono)}
+.timer.danger{color:var(--red);border-color:rgba(220,38,38,.3);background:rgba(220,38,38,.07)}
+.q-q{font-size:15px;font-weight:700;color:var(--text);background:var(--surface2);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;line-height:1.6}
+.q-opts{display:flex;flex-direction:column;gap:8px}
+.q-opt{padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--surface);color:var(--text);text-align:left;transition:all .2s}
+.q-opt:hover:not(:disabled){border-color:var(--blue);background:var(--blue-dim)}
+.q-opt.correct{background:rgba(22,163,74,.08);border-color:var(--green);color:var(--green)}
+.q-opt.wrong{background:rgba(220,38,38,.07);border-color:var(--red);color:var(--red)}
+.q-fb{font-size:13px;padding:10px 14px;border-radius:var(--radius-sm);margin-top:10px;display:none}
+.q-fb.show.ok{display:block;background:rgba(22,163,74,.08);color:var(--green);border-left:3px solid var(--green)}
+.q-fb.show.no{display:block;background:rgba(220,38,38,.07);color:var(--red);border-left:3px solid var(--red)}
+.q-next{background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 24px;font-size:13px;font-weight:700;margin-top:12px;display:none;transition:all .2s}
+.q-next:hover{background:var(--indigo)}
+.q-final{text-align:center;padding:32px 20px;background:var(--surface2);border-radius:var(--radius);border:1.5px solid var(--border)}
+
+/* ══════════════ LESSON VIEW ══════════════ */
+.lesson-layout{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start;margin-top:10px}
+.lesson-sb{position:sticky;top:calc(var(--nav-h) + 18px);background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px}
+.lesson-sb-t{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);margin-bottom:14px}
+.lni{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;margin-bottom:4px}
+.lni:hover{background:var(--surface2)}
+.lni.active{background:var(--blue-dim);color:var(--blue)}
+.lni.locked{opacity:.4;cursor:not-allowed}
+.lni.completed{color:var(--green)}
+.lni-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0}
+.lni.active .lni-dot{background:var(--blue)}
+.lni.completed .lni-dot{background:var(--green)}
+.lni-txt{font-size:13px;font-weight:600}
+.lesson-prg{margin-bottom:16px}
+.lesson-prg-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700}
+.lesson-con{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:30px}
+.lesson-con h2{font-family:var(--font-display);font-size:clamp(1.4rem,3.5vw,2rem);font-weight:900;color:var(--text);margin-bottom:10px;letter-spacing:-0.02em}
+.lesson-con h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;margin-top:22px}
+.lesson-con p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:14px}
+.lesson-nav-btns{display:flex;justify-content:space-between;margin-top:28px;gap:10px}
+.l-prev,.l-next{padding:11px 24px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;border:none;transition:all .2s}
+.l-prev{background:var(--surface2);color:var(--text2)}
+.l-prev:hover{color:var(--text)}
+.l-next{background:var(--blue);color:#fff}
+.l-next:hover{background:var(--indigo)}
+.l-obj{display:flex;gap:11px;margin-bottom:11px;align-items:flex-start}
+.l-obj-dot{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.l-obj-txt{font-size:14px;color:var(--text2);line-height:1.7}
+
+/* ══════════════ EXPERIMENTS ══════════════ */
+.exp-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-bottom:30px}
+.exp-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .25s;box-shadow:var(--shadow)}
+.exp-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
+.exp-cov{height:145px;display:flex;align-items:center;justify-content:center;font-size:54px}
+.exp-body{padding:20px}
+.exp-ttl{font-size:16px;font-weight:700;color:var(--text);margin-bottom:7px}
+.exp-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.exp-tag{background:var(--surface2);border-radius:100px;padding:3px 11px;font-size:11px;font-weight:700;color:var(--text2)}
+.exp-desc{font-size:13px;color:var(--text2);line-height:1.65}
+.exp-detail{display:none}
+.exp-detail.active{display:block}
+.exp-hdr{border-radius:var(--radius);padding:26px;color:#fff;margin-bottom:22px}
+.exp-sec{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+.exp-sec-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.exp-ctl{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:18px;margin:15px 0}
+.exp-row{display:flex;align-items:center;gap:12px;margin-bottom:11px;flex-wrap:wrap}
+.exp-lbl{font-size:13px;color:var(--text2);font-weight:600;min-width:190px;flex-shrink:0}
+.exp-val{font-size:13px;font-weight:700;color:var(--text);min-width:80px;text-align:right}
+.exp-res{background:var(--surface);border:1.5px solid var(--blue);border-radius:var(--radius-sm);padding:13px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0}
+.exp-res-l{font-size:13px;color:var(--text2)}
+.exp-res-v{font-size:22px;font-weight:900;color:var(--blue);font-family:var(--font-display)}
+.exp-btns{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.exp-btn{padding:9px 20px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;transition:all .2s}
+.exp-btn.bl{background:var(--blue);color:#fff}
+.exp-btn.gn{background:var(--green);color:#fff}
+.exp-btn.rd{background:var(--red);color:#fff}
+.exp-btn:hover{opacity:.85}
+.exp-proc-step{display:flex;gap:11px;align-items:flex-start;margin-bottom:11px}
+.eps-n{width:27px;height:27px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.eps-t{font-size:13px;color:var(--text2);line-height:1.65}
+.exp-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px;table-layout:fixed}
+.exp-table th{background:var(--blue);color:#fff;padding:10px 8px;font-weight:700;font-size:12px}
+.exp-table td{padding:8px;border-bottom:1px solid var(--border);text-align:center;color:var(--text);font-size:12px;word-break:break-all}
+.chart-wrap{position:relative;height:260px;margin-top:18px}
+.readouts{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.readout{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 18px;flex:1;min-width:90px;text-align:center}
+.readout-l{font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.readout-v{font-size:20px;font-weight:900;color:var(--blue);font-family:var(--font-display)}
+.sim-wrap{display:flex;justify-content:center;margin:16px 0;overflow-x:auto}
+.sim-c{border-radius:var(--radius);display:block;max-width:100%}
+
+/* ══════════════ QUIZZES PAGE ══════════════ */
+.quiz-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:30px}
+.quiz-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:26px;cursor:pointer;transition:all .25s;box-shadow:var(--shadow)}
+.quiz-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
+.quiz-card-ico{font-size:42px;margin-bottom:16px}
+.quiz-card-t{font-size:17px;font-weight:700;color:var(--text);margin-bottom:7px}
+.quiz-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.q-chip{background:var(--surface2);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--text2)}
+
+/* ══════════════ PROJECTS ══════════════ */
+.proj-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.proj-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .25s;box-shadow:var(--shadow)}
+.proj-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
+.proj-cov{height:155px;display:flex;align-items:center;justify-content:center;font-size:62px}
+.proj-body{padding:20px}
+.proj-badges{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.proj-badge{border-radius:100px;padding:3px 12px;font-size:11px;font-weight:700}
+.proj-badge.gn{background:rgba(22,163,74,.1);color:var(--green)}
+.proj-badge.am{background:rgba(217,119,6,.1);color:var(--amber)}
+.proj-badge.bl{background:var(--blue-dim);color:var(--blue)}
+.proj-ttl{font-size:16px;font-weight:700;color:var(--text);margin-bottom:7px}
+.proj-concept{font-size:12px;color:var(--text2);margin-bottom:12px}
+.proj-cta{font-size:12px;color:var(--blue);font-weight:700}
+.proj-det-hdr{border-radius:var(--radius);padding:26px;color:#fff;margin-bottom:22px}
+.p-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.p-chip{background:rgba(255,255,255,.22);border-radius:100px;padding:4px 14px;font-size:12px;font-weight:700}
+.step-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.step-card.done{border-color:var(--green);background:rgba(22,163,74,.05)}
+.sc-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.sc-badge{width:31px;height:31px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sc-badge.done{background:var(--green)}
+.sc-ttl{font-size:14px;font-weight:700;color:var(--text);flex:1;min-width:0}
+.sc-done-btn{background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:7px 16px;font-size:12px;font-weight:700;flex-shrink:0;transition:all .2s}
+.sc-done-btn.done{background:var(--green)}
+.sc-desc{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:9px}
+.sc-tip{background:var(--blue-dim);border-left:3px solid var(--blue);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:8px 12px;font-size:12px;color:var(--blue)}
+.mats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin:14px 0}
+.mat{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;color:var(--text2)}
+.reward-box{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border-radius:var(--radius);padding:36px 26px;text-align:center}
+.locked-notice{display:none;background:rgba(217,119,6,.1);border:1.5px solid rgba(217,119,6,.3);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--amber);margin-bottom:14px}
+.locked-notice.show{display:block}
+
+/* ══════════════ NOTES ══════════════ */
+.notes-area{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:26px}
+.notes-tb{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.notes-btn{padding:8px 18px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);font-size:13px;font-weight:700;transition:all .2s}
+.notes-btn:hover{color:var(--blue);border-color:var(--blue)}
+.notes-btn.save{background:var(--blue);color:#fff;border-color:var(--blue)}
+.notes-btn.save:hover{background:var(--indigo)}
+.notes-ta{width:100%;min-height:340px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:18px;font-size:14px;font-family:var(--font);color:var(--text);background:var(--surface);resize:vertical;line-height:1.75;outline:none;transition:border .2s}
+.notes-ta:focus{border-color:var(--blue)}
+.notes-st{font-size:12px;color:var(--text3);margin-top:9px;font-style:italic}
+
+/* ══════════════ FOOTER ══════════════ */
+footer{background:#0b0e17;color:#6b7280;padding:52px 24px 30px;margin-top:0}
+.ft-inner{max-width:900px;margin:0 auto}
+.ft-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:36px;margin-bottom:36px}
+.ft-brand{font-family:var(--font-display);font-size:19px;font-weight:700;color:#fff;margin-bottom:9px}
+.ft-brand-sub{font-size:12px;color:#6b7280;line-height:1.7}
+.ft-hd{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:#9ca3af;margin-bottom:12px}
+.ft-lnk{display:block;font-size:13px;color:#6b7280;margin-bottom:7px;cursor:pointer;transition:color .2s}
+.ft-lnk:hover{color:#60a5fa}
+.ft-bot{border-top:1px solid #1f2937;padding-top:22px;text-align:center;font-size:12px;color:#4b5563}
+.ft-bot strong{color:#60a5fa}
+
+/* ══════════════ RESPONSIVE ══════════════ */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .ham{display:flex}
+  .mod-grid{grid-template-columns:1fr}
+  .qk-grid{grid-template-columns:1fr 1fr}
+  .ft-top{grid-template-columns:1fr}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .lesson-layout{grid-template-columns:1fr}
+  .lesson-sb{display:none}
+  .cc-grid{grid-template-columns:1fr}
+  .calc-row{flex-direction:column;align-items:stretch}
+  .calc-lbl{min-width:0;width:100%}
+  .calc-val{text-align:left}
+  .exp-row{flex-direction:column;align-items:stretch}
+  .exp-lbl{min-width:0}
+  .mats{grid-template-columns:repeat(2,1fr)}
+  .apps{grid-template-columns:1fr 1fr}
+  .readouts{flex-direction:column}
+}
+@media(max-width:480px){
+  .qk-grid{grid-template-columns:1fr}
+  .hero-title{font-size:2.2rem}
+  .mats{grid-template-columns:1fr}
+  .apps{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <div class="nav-brand" onclick="goPage('home')">
+    <div class="nav-logo">⚛</div>
+    <div>
+      <div class="brand-name">Physics Learning Hub</div>
+      <div class="brand-sub">PTM3202 GROUP NAME</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <button class="nl active" id="nl-home" onclick="goPage('home')">Home</button>
+    <button class="nl" id="nl-modules" onclick="goPage('modules')">Modules</button>
+    <button class="nl" id="nl-experiments" onclick="goPage('experiments')">Experiments</button>
+    <button class="nl" id="nl-projects" onclick="goPage('projects')">Projects</button>
+    <button class="nl" id="nl-quizzes" onclick="goPage('quizzes')">Quizzes</button>
+    <button class="nl" id="nl-notes" onclick="goPage('notes')">Notes</button>
+  </div>
+  <div class="nav-r">
+    <button class="dark-btn" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+    <button class="ham" onclick="toggleMob()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-link active" onclick="goPage('home');toggleMob()">Home</button>
+  <button class="mob-link" onclick="goPage('modules');toggleMob()">Modules</button>
+  <button class="mob-link" onclick="goPage('experiments');toggleMob()">Experiments</button>
+  <button class="mob-link" onclick="goPage('projects');toggleMob()">Projects</button>
+  <button class="mob-link" onclick="goPage('quizzes');toggleMob()">Quizzes</button>
+  <button class="mob-link" onclick="goPage('notes');toggleMob()">Notes</button>
+</div>
+
+<!-- HOME -->
+<div class="pg active" id="pg-home">
+  <div class="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-in">
+      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Uganda O-Level Physics</div>
+      <h1 class="hero-title">Physics<br><em>Interactive</em><br>Learning Hub</h1>
+      <p class="hero-sub">Explore mechanics, optics, and waves through immersive experiments, animated diagrams, and guided lessons designed for O-Level excellence.</p>
+      <div class="hero-btns">
+        <button class="btn-pr" onclick="goPage('modules')"> Start Learning</button>
+        <button class="btn-ol" onclick="goPage('experiments')">🔬 Virtual Lab</button>
+      </div>
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 80" preserveAspectRatio="none" style="height:80px;">
+      <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="var(--bg)"/>
+    </svg>
+  </div>
+  <div class="home-body">
+    <div class="stats-strip">
+      <div class="stats-inner">
+       
+      </div>
+    </div>
+    <div class="sec-wrap">
+      <div class="sec-label"><span class="sec-label-txt">Learning Modules</span></div>
+      <div class="mod-grid">
+        <div class="mc bl" onclick="goPage('modules');openModule('mechanics')">
+          <div class="mc-ico">⚙️</div>
+          <div class="mc-name">Mechanics</div>
+          <div class="mc-desc">Master motion, forces, Newton's Laws, momentum, energy, pressure, and equilibrium.</div>
+          <div class="mc-meta"><span class="mc-topics">13 Topics</span><span class="mc-arr">→</span></div>
+        </div>
+        <div class="mc vi" onclick="goPage('modules');openModule('optics')">
+          <div class="mc-ico">🔭</div>
+          <div class="mc-name">Optics</div>
+          <div class="mc-desc">Explore reflection, refraction, lenses, mirrors, critical angle, and optical instruments.</div>
+          <div class="mc-meta"><span class="mc-topics">9 Topics</span><span class="mc-arr">→</span></div>
+        </div>
+        <div class="mc te" onclick="goPage('modules');openModule('waves')">
+          <div class="mc-ico">🌊</div>
+          <div class="mc-name">Waves</div>
+          <div class="mc-desc">Discover wave properties, sound, electromagnetic spectrum, and real-world applications.</div>
+          <div class="mc-meta"><span class="mc-topics">10 Topics</span><span class="mc-arr">→</span></div>
+        </div>
+      </div>
+      <div class="sec-label" style="margin-top:44px;"><span class="sec-label-txt">Quick Access</span></div>
+      <div class="qk-grid">
+        <div class="qk" onclick="goPage('experiments')">
+          <div class="qk-ico">🔬</div>
+          <div class="qk-title">Virtual Experiments</div>
+          <div class="qk-desc">Interactive simulations of Hooke's Law, refraction, and sound wave experiments.</div>
+        </div>
+        <div class="qk" onclick="goPage('projects')">
+          <div class="qk-ico">🛠️</div>
+          <div class="qk-title">Student Projects</div>
+          <div class="qk-desc">Build a hydraulic lift, periscope, and simple speaker with step-by-step guidance.</div>
+        </div>
+        <div class="qk" onclick="goPage('quizzes')">
+          <div class="qk-ico">📝</div>
+          <div class="qk-title">Topic Quizzes</div>
+          <div class="qk-desc">Test your knowledge with 20-question timed quizzes for each physics module.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULES PAGE -->
+<div class="pg" id="pg-modules">
+  <div class="pg-wrap">
+    <div id="mod-select">
+      <div class="pg-hd">Learning Modules</div>
+      <div class="pg-sub">Choose a module to begin your structured lesson journey. Complete each topic to unlock the next.</div>
+      <div class="mod-grid" style="margin-top:26px;">
+        <div class="mc bl" onclick="openModule('mechanics')">
+          <div class="mc-ico">⚙️</div><div class="mc-name">Mechanics</div>
+          <div class="mc-desc">Motion, forces, Newton's Laws, momentum, energy, pressure, moments, equilibrium, and density.</div>
+          <div class="mc-meta"><span class="mc-topics">13 Topics · Beginner → Advanced</span><span class="mc-arr">→</span></div>
+        </div>
+        <div class="mc vi" onclick="openModule('optics')">
+          <div class="mc-ico">🔭</div><div class="mc-name">Optics</div>
+          <div class="mc-desc">Reflection, refraction, lenses, mirrors, critical angle, total internal reflection, and optical instruments.</div>
+          <div class="mc-meta"><span class="mc-topics">9 Topics · Intermediate</span><span class="mc-arr">→</span></div>
+        </div>
+        <div class="mc te" onclick="openModule('waves')">
+          <div class="mc-ico">🌊</div><div class="mc-name">Waves</div>
+          <div class="mc-desc">Wave properties, transverse and longitudinal waves, sound, EM spectrum, echoes, and applications.</div>
+          <div class="mc-meta"><span class="mc-topics">10 Topics · Intermediate</span><span class="mc-arr">→</span></div>
+        </div>
+      </div>
+    </div>
+    <div id="mod-lesson" style="display:none;">
+      <button class="back-btn" onclick="closeModule()">← Back to Modules</button>
+      <div class="lesson-layout">
+        <div class="lesson-sb">
+          <div class="lesson-prg">
+            <div class="lesson-prg-lbl"><span>Progress</span><span id="l-pct">0%</span></div>
+            <div class="prg-wrap"><div class="prg-fill" id="l-pbar" style="width:0%"></div></div>
+          </div>
+          <div class="lesson-sb-t">Lessons</div>
+          <div id="l-sb-items"></div>
+        </div>
+        <div class="lesson-con" id="l-con"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPERIMENTS PAGE -->
+<div class="pg" id="pg-experiments">
+  <div class="pg-wrap">
+    <div id="exp-select">
+      <div class="pg-hd">Virtual Experiments</div>
+      <div class="pg-sub">Interactive lab simulations with adjustable controls, data tables, and automatic graph plotting.</div>
+      <div class="exp-cards">
+        <div class="exp-card" onclick="openExp('hooke')">
+          <div class="exp-cov" style="background:linear-gradient(135deg,#0f2460,#2563eb);">🔩</div>
+          <div class="exp-body">
+            <div class="exp-ttl">Hooke's Law</div>
+            <div class="exp-tags"><span class="exp-tag">Force</span><span class="exp-tag">Extension</span><span class="exp-tag">Springs</span></div>
+            <div class="exp-desc">Investigate the relationship between force and extension in a spring. Plot F-x graphs and find the spring constant.</div>
+          </div>
+        </div>
+        <div class="exp-card" onclick="openExp('refraction')">
+          <div class="exp-cov" style="background:linear-gradient(135deg,#2d0a6e,#7c3aed);">🔭</div>
+          <div class="exp-body">
+            <div class="exp-ttl">Refraction through Glass Block</div>
+            <div class="exp-tags"><span class="exp-tag">Optics</span><span class="exp-tag">Snell's Law</span><span class="exp-tag">Angles</span></div>
+            <div class="exp-desc">Trace rays through a glass block. Measure angles of incidence and refraction to verify Snell's Law.</div>
+          </div>
+        </div>
+        <div class="exp-card" onclick="openExp('echo')">
+          <div class="exp-cov" style="background:linear-gradient(135deg,#0d4a3a,#0d9488);">🔊</div>
+          <div class="exp-body">
+            <div class="exp-ttl">Echo & Speed of Sound</div>
+            <div class="exp-tags"><span class="exp-tag">Sound</span><span class="exp-tag">Waves</span><span class="exp-tag">Echo</span></div>
+            <div class="exp-desc">Measure the speed of sound using the echo method. Adjust distance and time to calculate v = 2d/t.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Hooke's Law -->
+    <div id="exp-hooke" class="exp-detail">
+      <button class="back-btn" onclick="closeExp()">← Back to Experiments</button>
+      <div class="exp-hdr" style="background:linear-gradient(135deg,#0f2460,#2563eb);">
+        <div style="font-size:13px;opacity:.7;margin-bottom:5px;">EXPERIMENT 1</div>
+        <div style="font-family:var(--font-display);font-size:23px;font-weight:900;">Hooke's Law — Spring Constant</div>
+        <p style="font-size:13px;opacity:.85;margin-top:7px;">Aim: To verify Hooke's Law and determine the spring constant k.</p>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📋 Theory & Formula</div>
+        <p style="font-size:14px;color:var(--text2);line-height:1.75;">Hooke's Law states that the extension of a spring is directly proportional to the applied force, provided the elastic limit is not exceeded.</p>
+        <div class="formula-box">F = k × x</div>
+        <div class="info-box">F = Force (N) &nbsp;|&nbsp; k = Spring constant (N/m) &nbsp;|&nbsp; x = Extension (m)</div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">🎛️ Interactive Simulation</div>
+        <div class="exp-ctl">
+          <div class="exp-row">
+            <label class="exp-lbl">⚖️ Mass on spring: <strong id="h-mv">100 g</strong></label>
+            <input type="range" id="h-mass" min="50" max="500" step="50" value="100" style="flex:1;" oninput="hookeUpdate()">
+          </div>
+          <div class="exp-row">
+            <label class="exp-lbl">🔩 Spring constant k: <strong id="h-kv">20 N/m</strong></label>
+            <input type="range" id="h-k" min="5" max="50" step="5" value="20" style="flex:1;" oninput="hookeUpdate()">
+          </div>
+        </div>
+        <div class="sim-wrap"><canvas id="hookeCanvas" width="460" height="320" class="sim-c"></canvas></div>
+        <div class="readouts">
+          <div class="readout"><div class="readout-l">Force (N)</div><div class="readout-v" id="h-force">0.98</div></div>
+          <div class="readout"><div class="readout-l">Extension (m)</div><div class="readout-v" id="h-ext">0.049</div></div>
+          <div class="readout"><div class="readout-l">k (N/m)</div><div class="readout-v" id="h-kout">20</div></div>
+        </div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📊 Data Collection</div>
+        <div class="exp-btns">
+          <button class="exp-btn bl" onclick="hookeRecord()">📌 Record Reading</button>
+          <button class="exp-btn gn" onclick="hookeGraph()">📈 Plot Graph</button>
+          <button class="exp-btn rd" onclick="hookeReset()">🔄 Reset</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="exp-table"><thead><tr><th>#</th><th>Mass (g)</th><th>Force F (N)</th><th>Extension x (m)</th><th>k = F/x (N/m)</th></tr></thead>
+          <tbody id="hooke-tb"></tbody></table>
+        </div>
+        <div id="hooke-graph" style="display:none;"><div class="chart-wrap"><canvas id="hookeChart"></canvas></div></div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📋 Procedure & Precautions</div>
+        <div class="exp-proc-step"><div class="eps-n">1</div><div class="eps-t">Set up the spring on a retort stand. Measure the natural length of the spring.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">2</div><div class="eps-t">Hang a known mass (e.g., 100 g) and measure the new length. Calculate extension = new length – natural length.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">3</div><div class="eps-t">Repeat for masses up to 500 g. Record all readings in the data table.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">4</div><div class="eps-t">Plot a graph of Force (y-axis) against Extension (x-axis). The slope gives the spring constant k.</div></div>
+        <div class="note-box">⚠️ Precaution: Readings must be taken when the spring is at rest. Do not stretch the spring past its elastic limit.</div>
+      </div>
+    </div>
+    <!-- Refraction -->
+    <div id="exp-refraction" class="exp-detail">
+      <button class="back-btn" onclick="closeExp()">← Back to Experiments</button>
+      <div class="exp-hdr" style="background:linear-gradient(135deg,#2d0a6e,#7c3aed);">
+        <div style="font-size:13px;opacity:.7;margin-bottom:5px;">EXPERIMENT 2</div>
+        <div style="font-family:var(--font-display);font-size:23px;font-weight:900;">Refraction through a Glass Block</div>
+        <p style="font-size:13px;opacity:.85;margin-top:7px;">Aim: To trace light rays through a glass block and verify Snell's Law.</p>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📋 Theory & Formula</div>
+        <p style="font-size:14px;color:var(--text2);line-height:1.75;">When light travels from one medium to another, it changes speed and bends. Snell's Law relates the angles of incidence and refraction to the refractive indices of the two media.</p>
+        <div class="formula-box">n₁ sin(θ₁) = n₂ sin(θ₂) &nbsp;|&nbsp; n = sin(i) / sin(r)</div>
+        <div class="info-box">n = refractive index &nbsp;|&nbsp; i = angle of incidence &nbsp;|&nbsp; r = angle of refraction</div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">🎛️ Ray Tracing Simulation</div>
+        <div class="exp-ctl">
+          <div class="exp-row">
+            <label class="exp-lbl">📐 Angle of Incidence: <strong id="ref-iv">40°</strong></label>
+            <input type="range" id="ref-i" min="5" max="85" step="5" value="40" style="flex:1;" oninput="refractionUpdate()">
+          </div>
+          <div class="exp-row">
+            <label class="exp-lbl">🔮 Refractive Index (glass): <strong id="ref-nv">1.50</strong></label>
+            <input type="range" id="ref-n" min="100" max="200" step="5" value="150" style="flex:1;" oninput="refractionUpdate()">
+          </div>
+        </div>
+        <div class="sim-wrap"><canvas id="refractionCanvas" width="480" height="340" class="sim-c"></canvas></div>
+        <div class="readouts">
+          <div class="readout"><div class="readout-l">Angle i</div><div class="readout-v" id="ref-iout">40°</div></div>
+          <div class="readout"><div class="readout-l">Angle r</div><div class="readout-v" id="ref-rout">25.4°</div></div>
+          <div class="readout"><div class="readout-l">Index n</div><div class="readout-v" id="ref-nout">1.50</div></div>
+        </div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📊 Data Collection</div>
+        <div class="exp-btns">
+          <button class="exp-btn bl" onclick="refractionRecord()">📌 Record Reading</button>
+          <button class="exp-btn gn" onclick="refractionGraph()">📈 Plot sin(i) vs sin(r)</button>
+          <button class="exp-btn rd" onclick="refractionReset()">🔄 Reset</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="exp-table"><thead><tr><th>#</th><th>i (°)</th><th>r (°)</th><th>sin(i)</th><th>sin(r)</th><th>n = sin(i)/sin(r)</th></tr></thead>
+          <tbody id="refraction-tb"></tbody></table>
+        </div>
+        <div id="refraction-graph" style="display:none;"><div class="chart-wrap"><canvas id="refractionChart"></canvas></div></div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📋 Procedure & Precautions</div>
+        <div class="exp-proc-step"><div class="eps-n">1</div><div class="eps-t">Place the glass block on a sheet of paper and trace its outline.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">2</div><div class="eps-t">Draw a normal perpendicular to the glass surface. Direct a ray at angle i and mark its path.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">3</div><div class="eps-t">Mark where the ray exits the block and trace the refracted ray inside.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">4</div><div class="eps-t">Measure angles i and r. Plot sin(i) vs sin(r). The gradient gives the refractive index n.</div></div>
+        <div class="note-box">⚠️ Precaution: Ensure the glass block does not move. Use sharp pencils for accurate ray tracing.</div>
+      </div>
+    </div>
+    <!-- Echo -->
+    <div id="exp-echo" class="exp-detail">
+      <button class="back-btn" onclick="closeExp()">← Back to Experiments</button>
+      <div class="exp-hdr" style="background:linear-gradient(135deg,#0d4a3a,#0d9488);">
+        <div style="font-size:13px;opacity:.7;margin-bottom:5px;">EXPERIMENT 3</div>
+        <div style="font-family:var(--font-display);font-size:23px;font-weight:900;">Echo & Speed of Sound</div>
+        <p style="font-size:13px;opacity:.85;margin-top:7px;">Aim: To measure the speed of sound in air using the echo method.</p>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📋 Theory & Formula</div>
+        <p style="font-size:14px;color:var(--text2);line-height:1.75;">When sound bounces off a reflecting surface, it produces an echo. The time for the echo to return depends on the distance and speed of sound.</p>
+        <div class="formula-box">v = 2d / t &nbsp;|&nbsp; Speed of Sound ≈ 340 m/s in air</div>
+        <div class="info-box">v = speed of sound (m/s) &nbsp;|&nbsp; d = distance to wall (m) &nbsp;|&nbsp; t = time for echo (s)</div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">🎛️ Echo Simulation</div>
+        <div class="exp-ctl">
+          <div class="exp-row">
+            <label class="exp-lbl">📏 Distance to wall (d): <strong id="echo-dv">50 m</strong></label>
+            <input type="range" id="echo-d" min="20" max="200" step="5" value="50" style="flex:1;" oninput="echoUpdate()">
+          </div>
+          <div class="exp-row">
+            <label class="exp-lbl">🌡️ Temperature: <strong id="echo-tv">20°C</strong></label>
+            <input type="range" id="echo-temp" min="0" max="40" step="5" value="20" style="flex:1;" oninput="echoUpdate()">
+          </div>
+        </div>
+        <div class="sim-wrap"><canvas id="echoCanvas" width="480" height="200" class="sim-c"></canvas></div>
+        <div class="readouts">
+          <div class="readout"><div class="readout-l">Distance (m)</div><div class="readout-v" id="echo-dout">50</div></div>
+          <div class="readout"><div class="readout-l">Echo Time (s)</div><div class="readout-v" id="echo-tout">0.294</div></div>
+          <div class="readout"><div class="readout-l">Speed (m/s)</div><div class="readout-v" id="echo-vout">340</div></div>
+        </div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📊 Data Collection</div>
+        <div class="exp-btns">
+          <button class="exp-btn bl" onclick="echoRecord()">📌 Record Reading</button>
+          <button class="exp-btn gn" onclick="echoGraph()">📈 Plot Graph</button>
+          <button class="exp-btn rd" onclick="echoReset()">🔄 Reset</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="exp-table"><thead><tr><th>#</th><th>Distance d (m)</th><th>Time t (s)</th><th>Speed v = 2d/t (m/s)</th></tr></thead>
+          <tbody id="echo-tb"></tbody></table>
+        </div>
+        <div id="echo-graph" style="display:none;"><div class="chart-wrap"><canvas id="echoChart"></canvas></div></div>
+      </div>
+      <div class="exp-sec">
+        <div class="exp-sec-t">📋 Procedure & Precautions</div>
+        <div class="exp-proc-step"><div class="eps-n">1</div><div class="eps-t">Stand 50+ metres from a tall flat wall or cliff face in an open area.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">2</div><div class="eps-t">Clap two wooden blocks together sharply. Listen for the echo.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">3</div><div class="eps-t">Time 20 claps, adjusting rhythm to clap when the previous echo is heard. t = total time ÷ 20.</div></div>
+        <div class="exp-proc-step"><div class="eps-n">4</div><div class="eps-t">Calculate v = 2d / t. Repeat at different distances and average your results.</div></div>
+        <div class="note-box">⚠️ Precaution: Avoid windy conditions. Take readings on still days for more accurate results.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS PAGE -->
+<div class="pg" id="pg-projects">
+  <div class="pg-wrap">
+    <div id="proj-select">
+      <div class="pg-hd">Student Projects</div>
+      <div class="pg-sub">Hands-on physics projects. Follow the guided steps, complete each task, then claim your reward badge!</div>
+      <div class="proj-cards">
+        <div class="proj-card" onclick="openProject('hydraulic')">
+          <div class="proj-cov" style="background:linear-gradient(135deg,#0f2460,#2563eb);">💧</div>
+          <div class="proj-body">
+            <div class="proj-badges"><span class="proj-badge am">Intermediate</span><span class="proj-badge bl">⏱ 45 min</span></div>
+            <div class="proj-ttl">Hydraulic Lift</div>
+            <div class="proj-concept">🔧 Pressure & Pascal's Principle</div>
+            <div class="proj-cta">Tap to explore →</div>
+          </div>
+        </div>
+        <div class="proj-card" onclick="openProject('periscope')">
+          <div class="proj-cov" style="background:linear-gradient(135deg,#2d0a6e,#7c3aed);">🔭</div>
+          <div class="proj-body">
+            <div class="proj-badges"><span class="proj-badge gn">Beginner</span><span class="proj-badge bl">⏱ 30 min</span></div>
+            <div class="proj-ttl">Periscope</div>
+            <div class="proj-concept">🔭 Reflection of Light</div>
+            <div class="proj-cta">Tap to explore →</div>
+          </div>
+        </div>
+        <div class="proj-card" onclick="openProject('speaker')">
+          <div class="proj-cov" style="background:linear-gradient(135deg,#0d4a3a,#0d9488);">🔊</div>
+          <div class="proj-body">
+            <div class="proj-badges"><span class="proj-badge am">Intermediate</span><span class="proj-badge bl">⏱ 40 min</span></div>
+            <div class="proj-ttl">Simple Speaker</div>
+            <div class="proj-concept">🔊 Electromagnetism & Sound</div>
+            <div class="proj-cta">Tap to explore →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="proj-detail" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- QUIZZES PAGE -->
+<div class="pg" id="pg-quizzes">
+  <div class="pg-wrap">
+    <div id="quiz-select">
+      <div class="pg-hd">Topic Quizzes</div>
+      <div class="pg-sub">Test your knowledge with 20-question quizzes. One question at a time, with explanations after each answer.</div>
+      <div class="quiz-cards">
+        <div class="quiz-card" onclick="startQuiz('mechanics')">
+          <div class="quiz-card-ico">⚙️</div>
+          <div class="quiz-card-t">Mechanics Quiz</div>
+          <div class="quiz-card-meta"><span class="q-chip">20 Questions</span><span class="q-chip">⏱ Timed</span></div>
+          <div class="qk-desc">Forces, motion, Newton's Laws, momentum, energy, pressure, and equilibrium.</div>
+        </div>
+        <div class="quiz-card" onclick="startQuiz('optics')">
+          <div class="quiz-card-ico">🔭</div>
+          <div class="quiz-card-t">Optics Quiz</div>
+          <div class="quiz-card-meta"><span class="q-chip">20 Questions</span><span class="q-chip">⏱ Timed</span></div>
+          <div class="qk-desc">Reflection, refraction, lenses, mirrors, critical angle, and optical instruments.</div>
+        </div>
+        <div class="quiz-card" onclick="startQuiz('waves')">
+          <div class="quiz-card-ico">🌊</div>
+          <div class="quiz-card-t">Waves Quiz</div>
+          <div class="quiz-card-meta"><span class="q-chip">20 Questions</span><span class="q-chip">⏱ Timed</span></div>
+          <div class="qk-desc">Wave properties, sound, EM spectrum, frequency, wavelength, and applications.</div>
+        </div>
+      </div>
+    </div>
+    <div id="quiz-active" style="display:none;">
+      <button class="back-btn" onclick="endQuiz()">← Back to Quizzes</button>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
+          <div id="quiz-active-t" style="font-size:16px;font-weight:700;color:var(--text)"></div>
+          <div class="timer" id="quiz-timer">⏱ 00:00</div>
+        </div>
+        <div class="quiz-bar">
+          <div class="q-track"><div class="q-fill" id="qz-fill" style="width:0%"></div></div>
+          <span class="q-badge" id="qz-counter">Q 1 of 20</span>
+          <span class="q-score" id="qz-score">Score: 0</span>
+        </div>
+        <div id="qz-box"></div>
+        <button class="q-next" id="qz-next" onclick="quizNext()">Next Question →</button>
+        <div id="qz-final" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES PAGE -->
+<div class="pg" id="pg-notes">
+  <div class="pg-wrap">
+    <div class="pg-hd">Personal Notes</div>
+    <div class="pg-sub">Your personal physics notebook. Notes are saved automatically to your browser.</div>
+    <div class="notes-area">
+      <div class="notes-tb">
+        <button class="notes-btn save" onclick="saveNotes()">💾 Save</button>
+        <button class="notes-btn" onclick="printNotes()">🖨️ Print</button>
+        <button class="notes-btn" onclick="clearNotes()">🗑️ Clear</button>
+      </div>
+      <textarea class="notes-ta" id="notes-ta" placeholder="Write your physics notes here...&#10;&#10;You can write formulas, key concepts, revision notes, and more.&#10;&#10;Your notes are saved automatically to this browser."></textarea>
+      <div class="notes-st" id="notes-st">Notes auto-save every 10 seconds.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-inner">
+    <div class="ft-top">
+      <div>
+        <div class="ft-brand">⚛ Physics Learning Hub</div>
+        <div class="ft-brand-sub">Designed for Uganda O-Level Physics Learning.<br>PTM3202 GROUP NAME · Academic Year 2025/2026</div>
+      </div>
+      <div>
+        <div class="ft-hd">Modules</div>
+        <span class="ft-lnk" onclick="goPage('modules');openModule('mechanics')">Mechanics</span>
+        <span class="ft-lnk" onclick="goPage('modules');openModule('optics')">Optics</span>
+        <span class="ft-lnk" onclick="goPage('modules');openModule('waves')">Waves</span>
+      </div>
+      <div>
+        <div class="ft-hd">Resources</div>
+        <span class="ft-lnk" onclick="goPage('experiments')">Virtual Experiments</span>
+        <span class="ft-lnk" onclick="goPage('projects')">Student Projects</span>
+        <span class="ft-lnk" onclick="goPage('quizzes')">Topic Quizzes</span>
+        <span class="ft-lnk" onclick="goPage('notes')">Personal Notes</span>
+      </div>
+    </div>
+    <div class="ft-bot">© 2026 Physics Interactive Learning Hub &nbsp;|&nbsp; <strong>PTM3202 GROUP NAME</strong> &nbsp;|&nbsp; Designed for Uganda O-Level Physics Learning</div>
+  </div>
+</footer>
+
+<script>
+/* ════════════════════════════════
+   NAVIGATION
+════════════════════════════════ */
+let dark=false;
+function goPage(p){
+  document.querySelectorAll('.pg').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nl,.mob-link').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pg-'+p).classList.add('active');
+  const nl=document.getElementById('nl-'+p);if(nl)nl.classList.add('active');
+  window.scrollTo(0,0);
+  if(p==='experiments'){setTimeout(()=>{hookeInit();refractionInit();echoInit();},100);}
+}
+function toggleDark(){
+  dark=!dark;document.body.classList.toggle('dark',dark);
+  document.querySelector('.dark-btn').textContent=dark?'☀️':'🌙';
+}
+function toggleMob(){document.getElementById('mobMenu').classList.toggle('open');}
+
+/* ════════════════════════════════
+   HERO PARTICLES
+════════════════════════════════ */
+(function(){
+  const c=document.getElementById('heroCanvas');if(!c)return;
+  let W,H,pts=[],f=0;
+  function resize(){W=c.width=c.parentElement.offsetWidth;H=c.height=c.parentElement.offsetHeight;}
+  function mkPt(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,r:.5+Math.random()*2,ph:Math.random()*Math.PI*2,t:Math.floor(Math.random()*3)}}
+  function init(){resize();pts=Array.from({length:90},mkPt);}
+  function draw(){
+    const ctx=c.getContext('2d');ctx.clearRect(0,0,W,H);f++;
+    const cols=['rgba(37,99,235,','rgba(124,58,237,','rgba(13,148,136,'];
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      const a=.12+.1*Math.sin(f*.018+p.ph);
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=cols[p.t]+a+')';ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(37,99,235,'+(0.12*(1-d/110))+')';ctx.lineWidth=.6;ctx.stroke();}
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  init();draw();window.addEventListener('resize',init);
+})();
+
+/* ════════════════════════════════
+   MODULE SYSTEM
+════════════════════════════════ */
+const MODS={
+  mechanics:{color:'#2563eb',grad:'linear-gradient(135deg,#0f2460,#2563eb)',
+    lessons:[
+      {id:'intro',title:'Introduction to Mechanics',icon:'📖'},
+      {id:'motion',title:'Distance, Displacement & Speed',icon:'📏'},
+      {id:'velocity',title:'Velocity & Acceleration',icon:'🚀'},
+      {id:'newton',title:"Newton's Laws of Motion",icon:'⚖️'},
+      {id:'momentum',title:'Momentum & Impulse',icon:'💥'},
+      {id:'energy',title:'Work, Energy & Power',icon:'⚡'},
+      {id:'pressure',title:'Pressure & Density',icon:'🧪'},
+      {id:'moments',title:'Moments & Equilibrium',icon:'⚖️'},
+      {id:'quiz',title:'Module Quiz',icon:'📝'},
+    ]
+  },
+  optics:{color:'#7c3aed',grad:'linear-gradient(135deg,#2d0a6e,#7c3aed)',
+    lessons:[
+      {id:'intro',title:'Introduction to Optics',icon:'📖'},
+      {id:'reflection',title:'Reflection & Mirrors',icon:'🪞'},
+      {id:'refraction',title:"Refraction & Snell's Law",icon:'💡'},
+      {id:'lenses',title:'Lenses & Ray Diagrams',icon:'🔭'},
+      {id:'critical',title:'Critical Angle & TIR',icon:'💎'},
+      {id:'eye',title:'The Human Eye',icon:'👁️'},
+      {id:'instruments',title:'Optical Instruments',icon:'🔬'},
+      {id:'quiz',title:'Module Quiz',icon:'📝'},
+    ]
+  },
+  waves:{color:'#0d9488',grad:'linear-gradient(135deg,#0d4a3a,#0d9488)',
+    lessons:[
+      {id:'intro',title:'Introduction to Waves',icon:'📖'},
+      {id:'types',title:'Types of Waves',icon:'〰️'},
+      {id:'properties',title:'Wave Properties',icon:'📐'},
+      {id:'sound',title:'Sound Waves',icon:'🔊'},
+      {id:'echoes',title:'Echoes & Reflection',icon:'📡'},
+      {id:'em',title:'Electromagnetic Spectrum',icon:'☀️'},
+      {id:'applications',title:'Wave Applications',icon:'📱'},
+      {id:'quiz',title:'Module Quiz',icon:'📝'},
+    ]
+  }
+};
+
+let curMod=null,curLesson=0,doneSet=new Set();
+
+function openModule(mod){
+  curMod=mod;curLesson=0;doneSet=new Set();
+  document.getElementById('mod-select').style.display='none';
+  document.getElementById('mod-lesson').style.display='block';
+  renderSidebar();renderLesson(0);
+}
+function closeModule(){
+  document.getElementById('mod-select').style.display='block';
+  document.getElementById('mod-lesson').style.display='none';
+  curMod=null;
+}
+function renderSidebar(){
+  const m=MODS[curMod],total=m.lessons.length-1,done=doneSet.size,pct=Math.round(done/total*100);
+  document.getElementById('l-pct').textContent=pct+'%';
+  document.getElementById('l-pbar').style.width=pct+'%';
+  const c=document.getElementById('l-sb-items');
+  c.innerHTML=m.lessons.map((l,i)=>{
+    const active=i===curLesson,completed=doneSet.has(i),locked=i>0&&!doneSet.has(i-1)&&i!==curLesson;
+    let cls='lni';if(active)cls+=' active';if(completed)cls+=' completed';if(locked)cls+=' locked';
+    return`<div class="${cls}" onclick="${locked?'alert(\'Complete the previous lesson first!\')':'goLesson('+i+')'}">`+
+      `<div class="lni-dot"></div><div class="lni-txt">${l.icon} ${l.title}</div></div>`;
+  }).join('');
+}
+function goLesson(i){curLesson=i;renderSidebar();renderLesson(i);document.getElementById('l-con').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderLesson(i){
+  const m=MODS[curMod],l=m.lessons[i],isLast=i===m.lessons.length-1,hasPrev=i>0;
+  const content=getLessonContent(curMod,l.id);
+  const prev=hasPrev?`<button class="l-prev" onclick="goLesson(${i-1})">← Previous</button>`:`<div></div>`;
+  const next=isLast?`<button class="l-next" onclick="closeModule()">🏠 Back to Modules</button>`:
+    `<button class="l-next" onclick="doneSet.add(${i});goLesson(${i+1})">Next Lesson →</button>`;
+  document.getElementById('l-con').innerHTML=content+`<div class="lesson-nav-btns">${prev}${next}</div>`;
+  // init embedded quizzes
+  const qmap={mechanics_quiz:{box:'mq-box',fill:'mq-fill',ctr:'mq-ctr',sc:'mq-sc',nb:'mq-next',qs:MECH_Q},
+               optics_quiz:{box:'oq-box',fill:'oq-fill',ctr:'oq-ctr',sc:'oq-sc',nb:'oq-next',qs:OPTICS_Q},
+               waves_quiz:{box:'wq-box',fill:'wq-fill',ctr:'wq-ctr',sc:'wq-sc',nb:'wq-next',qs:WAVES_Q}};
+  const key=curMod+'_'+l.id;
+  if(qmap[key])setTimeout(()=>initMQ(qmap[key]),60);
+}
+
+/* ════════ LESSON CONTENT ════════ */
+function getLessonContent(mod,id){
+  if(mod==='mechanics')return getMechLesson(id);
+  if(mod==='optics')return getOpticsLesson(id);
+  if(mod==='waves')return getWavesLesson(id);
+  return'';
+}
+
+function getMechLesson(id){
+  const L={
+    intro:`<h2>⚙️ Introduction to Mechanics</h2>
+<p>Mechanics is the branch of physics that studies <strong>motion</strong> and the <strong>forces</strong> that cause it. It forms the foundation of classical physics and explains everything from a rolling ball to the orbit of planets.</p>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Understand what mechanics studies and why it matters</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Identify key concepts: motion, force, energy, and momentum</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Relate mechanics to everyday phenomena</div></div>
+<h3>🌍 Why Mechanics Matters</h3>
+<p>Every time you walk, drive, throw a ball, or ride a bicycle — mechanics is at work. Engineers use mechanics to design buildings, bridges, cars, aeroplanes, and satellites.</p>
+<div class="apps">
+<div class="app"><div class="app-ico">🚗</div><div class="app-t">Transport</div><div class="app-d">Designing safe cars and aeroplanes</div></div>
+<div class="app"><div class="app-ico">🏗️</div><div class="app-t">Construction</div><div class="app-d">Calculating loads on bridges and buildings</div></div>
+<div class="app"><div class="app-ico">🚀</div><div class="app-t">Space</div><div class="app-d">Launching and navigating rockets</div></div>
+<div class="app"><div class="app-ico">⚽</div><div class="app-t">Sports</div><div class="app-d">Understanding projectile motion in ball sports</div></div>
+</div>
+<h3>📚 Key Topics You Will Study</h3>
+<div class="chips"><span class="chip">📏 Distance & Displacement</span><span class="chip">⚡ Speed & Velocity</span><span class="chip">🚀 Acceleration</span><span class="chip">⚖️ Newton's 3 Laws</span><span class="chip">💥 Momentum</span><span class="chip">⚙️ Work & Energy</span><span class="chip">🧪 Pressure & Density</span><span class="chip">⚖️ Moments & Equilibrium</span></div>
+<div class="sum-box"><div class="sum-t">Module Summary</div><div class="sum-i"><div class="sum-dot"></div><div>Mechanics is built on precise measurements of distance, time, and mass</div></div><div class="sum-i"><div class="sum-dot"></div><div>Forces cause changes in motion — from rest to movement, or fast to slow</div></div><div class="sum-i"><div class="sum-dot"></div><div>Energy is conserved in all physical processes</div></div></div>`,
+
+    motion:`<h2>📏 Distance, Displacement & Speed</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Distinguish between scalar and vector quantities</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Define and calculate distance, displacement, speed, and velocity</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Interpret distance-time graphs</div></div>
+<h3>📖 Scalar vs Vector Quantities</h3>
+<p>Physical quantities are either <strong>scalar</strong> (magnitude only) or <strong>vector</strong> (magnitude AND direction).</p>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">📏</div><div><div class="cc-name">Distance</div><div class="cc-fm">Scalar — total path length</div></div></div><div class="cc-body">Distance is the total length of the path taken, regardless of direction. Units: metres (m). Running 400m around a track — distance = 400 m.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">➡️</div><div><div class="cc-name">Displacement</div><div class="cc-fm">Vector — straight-line change</div></div></div><div class="cc-body">Displacement is the straight-line distance from start to finish, including direction. After running one full 400m lap, displacement = 0 m (back where you started!).</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">⚡</div><div><div class="cc-name">Speed</div><div class="cc-fm">speed = distance / time</div></div></div><div class="cc-body">Speed tells you how fast an object moves. Scalar quantity. Average speed = total distance ÷ total time. Units: m/s or km/h.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🚀</div><div><div class="cc-name">Velocity</div><div class="cc-fm">v = Δx / Δt (vector)</div></div></div><div class="cc-body">Velocity is speed in a given direction. It is a vector. If direction changes, velocity changes — even if speed stays the same!</div></div>
+</div>
+<div class="formula-box">speed = distance ÷ time &nbsp;|&nbsp; s = d/t</div>
+<div class="formula-box">velocity = displacement ÷ time &nbsp;|&nbsp; v = Δx/Δt</div>
+<h3>💡 Worked Example</h3>
+<div class="worked"><div class="worked-ttl">🔢 A student walks 300 m east then 400 m north. Find distance and displacement.</div>
+<div class="worked-step"><div class="ws-n">1</div><div class="ws-t">Distance = 300 + 400 = <strong>700 m</strong> (total path)</div></div>
+<div class="worked-step"><div class="ws-n">2</div><div class="ws-t">Displacement = √(300² + 400²) = √250000 = <strong>500 m</strong></div></div>
+<div class="worked-step"><div class="ws-n">3</div><div class="ws-t">Direction: θ = arctan(400/300) ≈ 53° north of east</div></div></div>
+<h3>🔢 Interactive Speed Calculator</h3>
+<div class="calc-box">
+<div class="calc-row"><label class="calc-lbl">Distance (m):</label><input type="range" id="sp-d" min="10" max="1000" step="10" value="100" style="flex:1;" oninput="spCalc()"><span class="calc-val" id="sp-dv">100</span></div>
+<div class="calc-row"><label class="calc-lbl">Time (s):</label><input type="range" id="sp-t" min="1" max="100" step="1" value="10" style="flex:1;" oninput="spCalc()"><span class="calc-val" id="sp-tv">10</span></div>
+<div class="calc-res"><span class="calc-res-l">Speed = d ÷ t</span><span class="calc-res-v" id="sp-r">10.0 m/s</span></div></div>
+<div class="scenario"><div class="scenario-q">🔍 A car travels 150 km in 2.5 hours. What is its average speed in km/h and m/s?</div>
+<button class="scenario-btn" onclick="toggleScen('sc-sp1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-sp1">Speed = 150 ÷ 2.5 = <strong>60 km/h</strong>. Convert: 60 × (1000/3600) = <strong>16.7 m/s</strong>.</div></div>`,
+
+    velocity:`<h2>🚀 Velocity & Acceleration</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define acceleration and calculate it using the formula</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Apply the SUVAT equations of motion to solve problems</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Interpret velocity-time graphs</div></div>
+<h3>⚡ What is Acceleration?</h3>
+<p>Acceleration is the <strong>rate of change of velocity</strong>. An object accelerates when it speeds up, slows down (deceleration), or changes direction.</p>
+<div class="formula-box">a = (v - u) / t &nbsp;|&nbsp; a = Δv / Δt</div>
+<div class="info-box">a = acceleration (m/s²) &nbsp;|&nbsp; v = final velocity &nbsp;|&nbsp; u = initial velocity &nbsp;|&nbsp; t = time</div>
+<h3>📐 Equations of Motion (SUVAT)</h3>
+<div class="laws">
+<div class="law"><div class="law-n">1</div><div><div class="law-t">v = u + at</div><div class="law-d">Final velocity = initial velocity + (acceleration × time)</div></div></div>
+<div class="law"><div class="law-n">2</div><div><div class="law-t">s = ut + ½at²</div><div class="law-d">Displacement = (initial velocity × time) + half × acceleration × time²</div></div></div>
+<div class="law"><div class="law-n">3</div><div><div class="law-t">v² = u² + 2as</div><div class="law-d">Final velocity² = initial velocity² + 2 × acceleration × displacement</div></div></div>
+<div class="law"><div class="law-n">4</div><div><div class="law-t">s = (u + v) / 2 × t</div><div class="law-d">Displacement = average velocity × time</div></div></div>
+</div>
+<h3>🔢 Acceleration Calculator</h3>
+<div class="calc-box">
+<div class="calc-row"><label class="calc-lbl">Initial velocity u (m/s):</label><input type="range" id="ac-u" min="0" max="30" value="0" style="flex:1;" oninput="acCalc()"><span class="calc-val" id="ac-uv">0</span></div>
+<div class="calc-row"><label class="calc-lbl">Final velocity v (m/s):</label><input type="range" id="ac-v" min="0" max="60" value="20" style="flex:1;" oninput="acCalc()"><span class="calc-val" id="ac-vv">20</span></div>
+<div class="calc-row"><label class="calc-lbl">Time t (s):</label><input type="range" id="ac-t" min="1" max="30" value="5" style="flex:1;" oninput="acCalc()"><span class="calc-val" id="ac-tv">5</span></div>
+<div class="calc-res"><span class="calc-res-l">a = (v - u) / t</span><span class="calc-res-v" id="ac-r">4.0 m/s²</span></div></div>
+<div class="scenario"><div class="scenario-q">🔍 A car starts from rest and reaches 30 m/s in 6 seconds. Calculate its acceleration and the distance covered.</div>
+<button class="scenario-btn" onclick="toggleScen('sc-ac1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-ac1">a = (30-0)/6 = <strong>5 m/s²</strong>. s = ½at² = ½×5×36 = <strong>90 m</strong>. Or s = (u+v)/2 × t = 15×6 = 90 m ✓</div></div>`,
+
+    newton:`<h2>⚖️ Newton's Laws of Motion</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">State and explain all three of Newton's Laws of Motion</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Apply F = ma to calculate forces, masses, and accelerations</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Give real-life examples of action-reaction pairs</div></div>
+<h3>📜 The Three Laws</h3>
+<div class="laws">
+<div class="law"><div class="law-n">1</div><div><div class="law-t">Law of Inertia</div><div class="law-d">An object at rest stays at rest, and an object in motion stays in motion at constant velocity, unless acted upon by a net external force. Inertia is the tendency of objects to resist changes in their state of motion.</div><span class="law-ex">🚗 Passengers lurch forward when a car brakes suddenly</span></div></div>
+<div class="law"><div class="law-n">2</div><div><div class="law-t">F = ma (Law of Acceleration)</div><div class="law-d">The acceleration of an object is directly proportional to the net force applied and inversely proportional to its mass. Net force = mass × acceleration.</div><span class="law-ex">🧱 Pushing a heavy crate needs more force than a light one</span></div></div>
+<div class="law"><div class="law-n">3</div><div><div class="law-t">Law of Action & Reaction</div><div class="law-d">For every action there is an equal and opposite reaction. Forces always come in pairs — they act on DIFFERENT objects.</div><span class="law-ex">🚀 Rocket exhaust pushes gas backward; reaction pushes rocket forward</span></div></div>
+</div>
+<div class="formula-box">F = m × a &nbsp;|&nbsp; Force (N) = Mass (kg) × Acceleration (m/s²)</div>
+<h3>🔢 Force Calculator</h3>
+<div class="calc-box">
+<div class="calc-row"><label class="calc-lbl">Mass m (kg):</label><input type="range" id="nw-m" min="1" max="100" value="10" style="flex:1;" oninput="nwCalc()"><span class="calc-val" id="nw-mv">10</span></div>
+<div class="calc-row"><label class="calc-lbl">Acceleration a (m/s²):</label><input type="range" id="nw-a" min="0" max="20" value="5" style="flex:1;" oninput="nwCalc()"><span class="calc-val" id="nw-av">5</span></div>
+<div class="calc-res"><span class="calc-res-l">F = m × a</span><span class="calc-res-v" id="nw-r">50 N</span></div></div>
+<div class="scenario"><div class="scenario-q">🔍 A 1200 kg car accelerates at 3 m/s². What net force acts? If friction is 800 N, what is the engine force?</div>
+<button class="scenario-btn" onclick="toggleScen('sc-nw1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-nw1">Net force = 1200 × 3 = <strong>3600 N</strong>. Engine force = 3600 + 800 = <strong>4400 N</strong>.</div></div>`,
+
+    momentum:`<h2>💥 Momentum & Impulse</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define momentum and calculate it using p = mv</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">State and apply the Law of Conservation of Momentum</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Understand impulse and its relationship to momentum change</div></div>
+<h3>📖 What is Momentum?</h3>
+<p>Momentum is the <strong>product of mass and velocity</strong>. It is a vector quantity. A heavy, fast-moving object has much more momentum than a light, slow one.</p>
+<div class="formula-box">p = m × v &nbsp;|&nbsp; Momentum = Mass × Velocity</div>
+<div class="info-box">Units: kg·m/s &nbsp;|&nbsp; p = momentum &nbsp;|&nbsp; m = mass (kg) &nbsp;|&nbsp; v = velocity (m/s)</div>
+<h3>⚖️ Law of Conservation of Momentum</h3>
+<div class="note-box">💡 In a closed system with no external forces, the <strong>total momentum before = total momentum after</strong> a collision.</div>
+<div class="formula-box">m₁u₁ + m₂u₂ = m₁v₁ + m₂v₂</div>
+<h3>⚡ Impulse</h3>
+<p>Impulse is the <strong>change in momentum</strong>, equal to force × time. This is why car airbags work — they increase the time of impact, reducing the force.</p>
+<div class="formula-box">Impulse = F × t = Δp = m(v - u)</div>
+<div class="calc-box">
+<div class="calc-row"><label class="calc-lbl">Mass m (kg):</label><input type="range" id="mm-m" min="1" max="100" value="5" style="flex:1;" oninput="mmCalc()"><span class="calc-val" id="mm-mv">5</span></div>
+<div class="calc-row"><label class="calc-lbl">Velocity v (m/s):</label><input type="range" id="mm-v" min="0" max="50" value="10" style="flex:1;" oninput="mmCalc()"><span class="calc-val" id="mm-vv">10</span></div>
+<div class="calc-res"><span class="calc-res-l">Momentum p = m × v</span><span class="calc-res-v" id="mm-r">50 kg·m/s</span></div></div>
+<div class="scenario"><div class="scenario-q">🔍 A 3 kg ball at 4 m/s collides with a stationary 2 kg ball. They move together. Find their velocity.</div>
+<button class="scenario-btn" onclick="toggleScen('sc-mm1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-mm1">Before: p = 3×4 + 0 = 12 kg·m/s. After: (3+2)×v = 12. v = 12/5 = <strong>2.4 m/s</strong>.</div></div>`,
+
+    energy:`<h2>⚡ Work, Energy & Power</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define and calculate work done, kinetic energy, and potential energy</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Apply the Law of Conservation of Energy</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Calculate power and understand its units</div></div>
+<div class="formula-box">W = F × d &nbsp;|&nbsp; KE = ½mv² &nbsp;|&nbsp; PE = mgh</div>
+<div class="formula-box">Power P = Work / Time = W/t &nbsp;|&nbsp; Unit: Watt (W)</div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🏃</div><div><div class="cc-name">Kinetic Energy</div><div class="cc-fm">KE = ½mv²</div></div></div><div class="cc-body">Energy of motion. Doubling the speed quadruples KE. A 2 kg ball at 3 m/s: KE = ½ × 2 × 9 = 9 J.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">⛰️</div><div><div class="cc-name">Gravitational PE</div><div class="cc-fm">PE = mgh</div></div></div><div class="cc-body">Stored energy due to height. m = mass, g = 9.8 m/s², h = height. 5 kg lifted 3 m: PE = 5×9.8×3 = 147 J.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔋</div><div><div class="cc-name">Work Done</div><div class="cc-fm">W = F × d</div></div></div><div class="cc-body">Work is done when a force moves an object. 1 J = 1 N × 1 m. The direction of force must match direction of motion.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">⚡</div><div><div class="cc-name">Power</div><div class="cc-fm">P = W/t = Fv</div></div></div><div class="cc-body">Power is the rate of doing work. Unit: Watt (W). 1 W = 1 J/s. A 100 W bulb uses 100 J every second.</div></div>
+</div>
+<div class="calc-box">
+<div class="calc-row"><label class="calc-lbl">Mass m (kg):</label><input type="range" id="en-m" min="1" max="100" value="5" style="flex:1;" oninput="enCalc()"><span class="calc-val" id="en-mv">5</span></div>
+<div class="calc-row"><label class="calc-lbl">Velocity v (m/s):</label><input type="range" id="en-v" min="0" max="30" value="10" style="flex:1;" oninput="enCalc()"><span class="calc-val" id="en-vv">10</span></div>
+<div class="calc-res"><span class="calc-res-l">KE = ½mv²</span><span class="calc-res-v" id="en-r">250 J</span></div></div>`,
+
+    pressure:`<h2>🧪 Pressure & Density</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define pressure and calculate it using P = F/A</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Define density and calculate it using ρ = m/V</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Explain pressure in liquids and state Pascal's Principle</div></div>
+<div class="formula-box">P = F / A &nbsp;|&nbsp; Unit: Pascal (Pa = N/m²)</div>
+<div class="formula-box">ρ = m / V &nbsp;|&nbsp; Unit: kg/m³</div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔨</div><div><div class="cc-name">Pressure</div><div class="cc-fm">P = F/A (Pa)</div></div></div><div class="cc-body">A knife cuts because it concentrates force on a tiny area, creating huge pressure. Snowshoes spread weight over large area, reducing pressure on snow.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">⚖️</div><div><div class="cc-name">Density</div><div class="cc-fm">ρ = m/V (kg/m³)</div></div></div><div class="cc-body">Objects denser than water (1000 kg/m³) sink; less dense float. Ice floats on water because it is less dense. Iron sinks (ρ = 7900 kg/m³).</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">💧</div><div><div class="cc-name">Pressure in Liquids</div><div class="cc-fm">P = ρgh</div></div></div><div class="cc-body">Liquid pressure increases with depth. P = ρgh. Dams are made thicker at the base because pressure is greatest there.</div></div>
+</div>
+<div class="info-box">🏛️ <strong>Pascal's Principle:</strong> Pressure applied to an enclosed fluid is transmitted equally in all directions. This is how hydraulic lifts and brakes work.</div>
+<div class="scenario"><div class="scenario-q">🔍 A 60 kg person stands on one foot of area 0.015 m². What pressure do they exert? (g = 10 m/s²)</div>
+<button class="scenario-btn" onclick="toggleScen('sc-pr1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-pr1">F = mg = 60×10 = 600 N. P = F/A = 600/0.015 = <strong>40,000 Pa = 40 kPa</strong>.</div></div>`,
+
+    moments:`<h2>⚖️ Moments & Equilibrium</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define moment of a force and calculate it</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Apply the Principle of Moments to solve balance problems</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Understand stable, unstable, and neutral equilibrium</div></div>
+<div class="formula-box">Moment = Force × perpendicular distance from pivot &nbsp;|&nbsp; M = F × d</div>
+<div class="info-box">Unit of Moment: Newton-metre (N·m)</div>
+<p>For a body in <strong>equilibrium</strong>, the sum of clockwise moments equals the sum of anticlockwise moments about any pivot point.</p>
+<div class="formula-box">Sum of Clockwise Moments = Sum of Anticlockwise Moments</div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🏛️</div><div><div class="cc-name">Stable Equilibrium</div><div class="cc-fm">Returns after disturbance</div></div></div><div class="cc-body">A ball in a bowl returns to original position when displaced. Centre of gravity is low, base is wide. Buildings and vehicles are designed for stable equilibrium.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">📌</div><div><div class="cc-name">Unstable Equilibrium</div><div class="cc-fm">Falls after disturbance</div></div></div><div class="cc-body">A ball balanced on top of another ball. When disturbed, it falls away. Centre of gravity is high above the pivot.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">⚽</div><div><div class="cc-name">Neutral Equilibrium</div><div class="cc-fm">Stays in new position</div></div></div><div class="cc-body">A ball on a flat surface. When displaced, it stays in the new position. Centre of gravity stays at the same height.</div></div>
+</div>
+<div class="scenario"><div class="scenario-q">🔍 A 2 m see-saw balanced at centre. A 40 kg child sits 0.8 m from pivot. Where must a 50 kg child sit to balance it?</div>
+<button class="scenario-btn" onclick="toggleScen('sc-mo1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-mo1">Clockwise moment = 40×9.8×0.8 = 313.6 N·m. 50×9.8×d = 313.6. d = <strong>0.64 m from the pivot</strong>.</div></div>`,
+
+    quiz:`<h2>📝 Mechanics Module Quiz</h2>
+<p>Test your understanding of all Mechanics topics. Good luck!</p>
+<div class="quiz-bar"><div class="q-track"><div class="q-fill" id="mq-fill" style="width:0%"></div></div><span class="q-badge" id="mq-ctr">Q 1 of 10</span><span class="q-score" id="mq-sc">Score: 0</span></div>
+<div id="mq-box"></div>
+<button class="q-next" id="mq-next" onclick="mqNext()">Next →</button>
+<div id="mq-final" style="display:none;"></div>`
+  };
+  return L[id]||`<h2>${id}</h2><p>Content coming soon.</p>`;
+}
+
+function getOpticsLesson(id){
+  const L={
+    intro:`<h2>🔭 Introduction to Optics</h2>
+<p>Optics is the branch of physics that studies the behaviour and properties of <strong>light</strong> and other electromagnetic waves, and their interactions with matter.</p>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Understand what optics studies and its real-world importance</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Know the key properties of light</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Identify the topics covered in this module</div></div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">⚡</div><div><div class="cc-name">Speed of Light</div><div class="cc-fm">c = 3 × 10⁸ m/s in vacuum</div></div></div><div class="cc-body">Light is the fastest thing in the universe. In glass or water it slows down — this causes refraction.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">➡️</div><div><div class="cc-name">Rectilinear Propagation</div><div class="cc-fm">Light travels in straight lines</div></div></div><div class="cc-body">Light travels in straight lines (rays). This explains why shadows form and why pinhole cameras work.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🌈</div><div><div class="cc-name">Dispersion</div><div class="cc-fm">ROYGBIV spectrum</div></div></div><div class="cc-body">White light is a mixture of all colours. A prism splits it into Red, Orange, Yellow, Green, Blue, Indigo, Violet.</div></div>
+</div>
+<div class="apps">
+<div class="app"><div class="app-ico">📷</div><div class="app-t">Photography</div><div class="app-d">Cameras use lenses to focus light</div></div>
+<div class="app"><div class="app-ico">🔬</div><div class="app-t">Microscopes</div><div class="app-d">Magnify tiny objects using lenses</div></div>
+<div class="app"><div class="app-ico">🌐</div><div class="app-t">Fibre Optics</div><div class="app-d">TIR carries data at speed of light</div></div>
+<div class="app"><div class="app-ico">🎭</div><div class="app-t">Spectacles</div><div class="app-d">Lenses correct vision defects</div></div>
+</div>`,
+
+    reflection:`<h2>🪞 Reflection & Mirrors</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">State the Laws of Reflection</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Describe the nature of images in plane and curved mirrors</div></div>
+<div class="laws">
+<div class="law"><div class="law-n">1</div><div><div class="law-t">Angle of incidence = Angle of reflection</div><div class="law-d">The angle i always equals the angle r. Both measured from the normal at the point of incidence.</div><span class="law-ex">🪞 i = r, always</span></div></div>
+<div class="law"><div class="law-n">2</div><div><div class="law-t">All three rays are coplanar</div><div class="law-d">The incident ray, reflected ray, and normal at the point of incidence all lie in the same plane.</div></div></div>
+</div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🪞</div><div><div class="cc-name">Plane Mirror</div><div class="cc-fm">Flat surface</div></div></div><div class="cc-body">Image is virtual, upright, same size as object, laterally inverted, as far behind as object is in front. Used in bathrooms.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🍵</div><div><div class="cc-name">Concave Mirror</div><div class="cc-fm">Converging mirror</div></div></div><div class="cc-body">Curved inward. Converges rays to focus. Used in car headlights, shaving mirrors, satellite dishes. Can produce real or virtual images.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔮</div><div><div class="cc-name">Convex Mirror</div><div class="cc-fm">Diverging mirror</div></div></div><div class="cc-body">Curved outward. Always produces virtual, upright, diminished images. Wide field of view. Used in car rear-view mirrors, shop security mirrors.</div></div>
+</div>
+<div class="formula-box">Mirror Formula: 1/f = 1/u + 1/v &nbsp;|&nbsp; Magnification: m = -v/u</div>`,
+
+    refraction:`<h2>💡 Refraction & Snell's Law</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Explain why refraction occurs in terms of change in speed</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Apply Snell's Law to calculate angles and refractive indices</div></div>
+<p>When light passes from one medium to another it <strong>changes speed</strong>. This causes the ray to bend — this is refraction.</p>
+<div class="formula-box">n = sin(i) / sin(r) &nbsp;|&nbsp; n = c / v</div>
+<div class="note-box">💡 Light bends TOWARDS the normal entering a denser medium (air→glass). It bends AWAY entering less dense medium (glass→air).</div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔮</div><div><div class="cc-name">Glass Block Refraction</div><div class="cc-fm">n_glass ≈ 1.5</div></div></div><div class="cc-body">A ray entering a glass block bends towards the normal. On exiting, it bends away. The emergent ray is parallel to the incident ray but displaced sideways (lateral displacement).</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🌊</div><div><div class="cc-name">Apparent Depth</div><div class="cc-fm">n = real depth / apparent depth</div></div></div><div class="cc-body">A pool appears shallower than it is because light bends as it leaves water. Apparent depth = Real depth / n.</div></div>
+</div>`,
+
+    lenses:`<h2>🔭 Lenses & Ray Diagrams</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Describe the types of lenses and their uses</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Use the lens formula to calculate image position</div></div>
+<div class="formula-box">Lens Formula: 1/f = 1/v - 1/u &nbsp;|&nbsp; Power = 1/f (Dioptres, D)</div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔍</div><div><div class="cc-name">Convex (Converging) Lens</div><div class="cc-fm">f is positive</div></div></div><div class="cc-body">Thicker at centre. Brings parallel rays to a focus. Used in: magnifying glasses, cameras, projectors, the human eye. Corrects long-sightedness (hyperopia).</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">📡</div><div><div class="cc-name">Concave (Diverging) Lens</div><div class="cc-fm">f is negative</div></div></div><div class="cc-body">Thinner at centre. Always produces virtual, upright, diminished images. Used to correct short-sightedness (myopia).</div></div>
+</div>
+<div class="note-box">📏 Ray Diagram Rules for Convex Lens: (1) Ray parallel to axis → passes through F on other side. (2) Ray through centre → continues straight. (3) Ray through F on object side → parallel on other side.</div>`,
+
+    critical:`<h2>💎 Critical Angle & Total Internal Reflection</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define critical angle and explain total internal reflection</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Calculate critical angle using sin(c) = 1/n</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Describe applications of TIR: fibre optics and periscopes</div></div>
+<div class="formula-box">sin(C) = 1/n &nbsp;|&nbsp; C = critical angle &nbsp;|&nbsp; n = refractive index</div>
+<p>TIR occurs when: (1) light travels from a <strong>denser to a less dense medium</strong>, and (2) the angle of incidence <strong>exceeds the critical angle</strong>.</p>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🌐</div><div><div class="cc-name">Optical Fibres</div><div class="cc-fm">TIR carries light along fibre</div></div></div><div class="cc-body">Light enters one end of a glass fibre and undergoes TIR at every surface. Used to carry internet data, telephone calls, and medical imaging (endoscopes).</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔭</div><div><div class="cc-name">Periscope & Prism</div><div class="cc-fm">45° prisms reflect at 90°</div></div></div><div class="cc-body">Right-angle glass prisms use TIR to reflect light efficiently. Used in binoculars and periscopes.</div></div>
+</div>
+<div class="scenario"><div class="scenario-q">🔍 Glass has refractive index 1.5. Calculate its critical angle.</div>
+<button class="scenario-btn" onclick="toggleScen('sc-cr1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-cr1">sin(C) = 1/n = 1/1.5 = 0.667. C = sin⁻¹(0.667) = <strong>41.8°</strong>. Any ray hitting the surface at more than 41.8° inside will be totally internally reflected.</div></div>`,
+
+    eye:`<h2>👁️ The Human Eye</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Identify the parts of the eye and their functions</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Explain accommodation and near point</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Describe vision defects and their corrections</div></div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔮</div><div><div class="cc-name">Cornea</div><div class="cc-fm">Main focusing element</div></div></div><div class="cc-body">Transparent front surface. Responsible for ~70% of the eye's focusing power. Fixed curvature — cannot change shape.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">💡</div><div><div class="cc-name">Lens</div><div class="cc-fm">Variable focusing (accommodation)</div></div></div><div class="cc-body">Flexible lens behind the iris. Ciliary muscles change its shape: thicker for close objects, thinner for distant. Near point of normal eye ≈ 25 cm.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">📺</div><div><div class="cc-name">Retina</div><div class="cc-fm">Rods & cones detect light</div></div></div><div class="cc-body">Light-sensitive layer at the back. Rods detect dim light. Cones detect colour. Image forms upside down; brain corrects it.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">👓</div><div><div class="cc-name">Vision Defects</div><div class="cc-fm">Myopia & Hyperopia</div></div></div><div class="cc-body">Myopia (short-sight): image in front of retina → concave lens. Hyperopia (long-sight): image behind retina → convex lens.</div></div>
+</div>`,
+
+    instruments:`<h2>🔬 Optical Instruments</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Describe how a magnifying glass works</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Explain the structure of a compound microscope</div></div>
+<div class="l-obj"><div class="l-obj-dot">3</div><div class="l-obj-txt">Describe how telescopes and cameras form images</div></div>
+<div class="apps">
+<div class="app"><div class="app-ico">🔍</div><div class="app-t">Magnifying Glass</div><div class="app-d">Single convex lens, object inside F, virtual magnified image. M = D/f</div></div>
+<div class="app"><div class="app-ico">🔬</div><div class="app-t">Compound Microscope</div><div class="app-d">Two convex lenses. Objective forms real image; eyepiece magnifies further.</div></div>
+<div class="app"><div class="app-ico">🔭</div><div class="app-t">Telescope</div><div class="app-d">Objective lens focuses distant object; eyepiece magnifies. Final image is virtual.</div></div>
+<div class="app"><div class="app-ico">📷</div><div class="app-t">Camera</div><div class="app-d">Convex lens forms real, inverted, diminished image on sensor/film.</div></div>
+</div>
+<div class="formula-box">Microscope Magnification: M = L/f₀ × D/fₑ</div>
+<div class="sum-box"><div class="sum-t">🔭 Optics Module Summary</div><div class="sum-i"><div class="sum-dot"></div><div>Law of reflection: i = r, always measured from the normal</div></div><div class="sum-i"><div class="sum-dot"></div><div>Refraction: n = sin(i)/sin(r) — light bends towards normal in denser medium</div></div><div class="sum-i"><div class="sum-dot"></div><div>TIR occurs when light goes from dense to less dense and angle > critical angle</div></div><div class="sum-i"><div class="sum-dot"></div><div>Convex lens corrects hyperopia; concave lens corrects myopia</div></div></div>`,
+
+    quiz:`<h2>📝 Optics Module Quiz</h2>
+<p>Test your understanding of all Optics topics!</p>
+<div class="quiz-bar"><div class="q-track"><div class="q-fill" id="oq-fill" style="width:0%"></div></div><span class="q-badge" id="oq-ctr">Q 1 of 10</span><span class="q-score" id="oq-sc">Score: 0</span></div>
+<div id="oq-box"></div>
+<button class="q-next" id="oq-next" onclick="oqNext()">Next →</button>
+<div id="oq-final" style="display:none;"></div>`
+  };
+  return L[id]||`<h2>${id}</h2><p>Content coming soon.</p>`;
+}
+
+function getWavesLesson(id){
+  const L={
+    intro:`<h2>🌊 Introduction to Waves</h2>
+<p>A wave is a disturbance that <strong>transfers energy</strong> from one place to another without transferring matter. Waves are everywhere — from ocean waves to the light that lets you read this page.</p>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define a wave and distinguish between mechanical and electromagnetic waves</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Identify the key properties of all waves</div></div>
+<div class="apps">
+<div class="app"><div class="app-ico">🌊</div><div class="app-t">Water Waves</div><div class="app-d">Transverse waves on ocean surfaces</div></div>
+<div class="app"><div class="app-ico">🔊</div><div class="app-t">Sound</div><div class="app-d">Longitudinal waves through air</div></div>
+<div class="app"><div class="app-ico">📡</div><div class="app-t">Radio</div><div class="app-d">EM waves carrying broadcasts</div></div>
+<div class="app"><div class="app-ico">🌈</div><div class="app-t">Light</div><div class="app-d">EM waves visible to the eye</div></div>
+</div>
+<div class="chips"><span class="chip">〰️ Transverse Waves</span><span class="chip">🔊 Longitudinal Waves</span><span class="chip">📐 Wave Properties</span><span class="chip">🔊 Sound</span><span class="chip">📡 Echoes</span><span class="chip">☀️ EM Spectrum</span></div>`,
+
+    types:`<h2>〰️ Types of Waves</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Distinguish transverse from longitudinal waves</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Give examples of each type</div></div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">〰️</div><div><div class="cc-name">Transverse Waves</div><div class="cc-fm">Vibration ⊥ direction of travel</div></div></div><div class="cc-body">The vibration (oscillation) is perpendicular (at right angles) to the direction of wave travel. Examples: light, water waves, EM waves, waves on a string. Can be polarised.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔊</div><div><div class="cc-name">Longitudinal Waves</div><div class="cc-fm">Vibration ∥ direction of travel</div></div></div><div class="cc-body">The vibration is parallel to the direction of wave travel. Has compressions and rarefactions. Examples: sound waves, seismic P-waves. Cannot be polarised.</div></div>
+</div>
+<div class="info-box">🌊 <strong>Mechanical waves</strong> need a medium to travel (sound, water, seismic). <strong>Electromagnetic waves</strong> can travel through vacuum at c = 3 × 10⁸ m/s (light, radio, X-rays).</div>`,
+
+    properties:`<h2>📐 Wave Properties</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Define amplitude, wavelength, frequency, and period</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Apply the wave equation v = fλ</div></div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">📈</div><div><div class="cc-name">Amplitude (A)</div><div class="cc-fm">Max displacement from rest</div></div></div><div class="cc-body">Maximum displacement of a particle from equilibrium. Unit: metres (m). Larger amplitude = more energy. Loudness of sound and brightness of light are related to amplitude.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">↔️</div><div><div class="cc-name">Wavelength (λ)</div><div class="cc-fm">Distance of one complete wave</div></div></div><div class="cc-body">Distance between two successive identical points on a wave (crest to crest). Symbol: λ (lambda). Unit: metres (m).</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔄</div><div><div class="cc-name">Frequency (f)</div><div class="cc-fm">Oscillations per second (Hz)</div></div></div><div class="cc-body">Number of complete oscillations per second. Unit: Hertz (Hz). Human hearing: 20 Hz to 20,000 Hz. Higher frequency = higher pitch.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">⏱️</div><div><div class="cc-name">Period (T)</div><div class="cc-fm">T = 1/f</div></div></div><div class="cc-body">Time for one complete oscillation. T = 1/f. Unit: seconds. If f = 5 Hz, then T = 0.2 s.</div></div>
+</div>
+<div class="formula-box">Wave Equation: v = f × λ &nbsp;|&nbsp; Speed = Frequency × Wavelength</div>
+<div class="calc-box">
+<div class="calc-row"><label class="calc-lbl">Frequency f (Hz):</label><input type="range" id="wv-f" min="1" max="2000" value="340" style="flex:1;" oninput="wvCalc()"><span class="calc-val" id="wv-fv">340</span></div>
+<div class="calc-row"><label class="calc-lbl">Wavelength λ (m):</label><input type="range" id="wv-l" min="1" max="100" value="1" style="flex:1;" oninput="wvCalc()"><span class="calc-val" id="wv-lv">1</span></div>
+<div class="calc-res"><span class="calc-res-l">v = f × λ</span><span class="calc-res-v" id="wv-r">340 m/s</span></div></div>`,
+
+    sound:`<h2>🔊 Sound Waves</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Describe how sound is produced and transmitted</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Distinguish infrasound, audible sound, and ultrasound</div></div>
+<p>Sound is produced when an object <strong>vibrates</strong>. Compressions and rarefactions travel outward as a longitudinal wave.</p>
+<div class="formula-box">Speed of sound in air ≈ 340 m/s (at 20°C) &nbsp;|&nbsp; v ≈ (331 + 0.6T) m/s</div>
+<div class="info-box">T = temperature in °C. Sound travels faster in warmer air, faster in liquids than gases, fastest in solids.</div>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔉</div><div><div class="cc-name">Infrasound</div><div class="cc-fm">f &lt; 20 Hz</div></div></div><div class="cc-body">Below human hearing. Produced by earthquakes, large animals (elephants, whales). Used to detect geological events.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🔊</div><div><div class="cc-name">Audible Sound</div><div class="cc-fm">20 Hz – 20,000 Hz</div></div></div><div class="cc-body">The range humans can hear. Pitch corresponds to frequency; loudness to amplitude.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🦇</div><div><div class="cc-name">Ultrasound</div><div class="cc-fm">f &gt; 20,000 Hz</div></div></div><div class="cc-body">Above human hearing. Used in: medical scanning, sonar, cleaning equipment, bat echolocation, industrial flaw detection.</div></div>
+</div>`,
+
+    echoes:`<h2>📡 Echoes & Reflection of Sound</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Explain what an echo is and conditions for hearing one</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Calculate distances using v = 2d/t</div></div>
+<div class="formula-box">v = 2d / t &nbsp;|&nbsp; d = vt / 2</div>
+<p>For a distinct echo, the reflecting surface must be at least 17 metres away so the echo arrives 0.1 s after the original.</p>
+<div class="cc-grid">
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🚢</div><div><div class="cc-name">SONAR</div><div class="cc-fm">Sound Navigation And Ranging</div></div></div><div class="cc-body">Ships send ultrasound pulses and detect echoes from the sea floor. Used to measure ocean depth and detect submarines.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">🏥</div><div><div class="cc-name">Medical Ultrasound</div><div class="cc-fm">Pulse-echo imaging</div></div></div><div class="cc-body">Ultrasound pulses sent into the body. Echoes from tissue boundaries build up an image. Used to monitor foetal development.</div></div>
+<div class="cc" onclick="this.classList.toggle('open')"><div class="cc-head"><div class="cc-ico">✈️</div><div><div class="cc-name">RADAR</div><div class="cc-fm">Radio Detection And Ranging</div></div></div><div class="cc-body">Radio waves (EM) reflected from aeroplanes. Used in air traffic control, weather forecasting, and speed cameras.</div></div>
+</div>
+<div class="scenario"><div class="scenario-q">🔍 A ship sends sonar and detects the echo after 0.8 s. Speed of sound in water = 1500 m/s. Depth of ocean?</div>
+<button class="scenario-btn" onclick="toggleScen('sc-ec1')">💡 Show Solution</button>
+<div class="scenario-ans" id="sc-ec1">d = vt/2 = 1500 × 0.8 / 2 = <strong>600 m</strong>. Factor of 2 because sound travels TO and BACK from sea floor.</div></div>`,
+
+    em:`<h2>☀️ The Electromagnetic Spectrum</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">List the members of the EM spectrum in order of wavelength/frequency</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Describe uses and dangers of different EM waves</div></div>
+<div class="formula-box">All EM waves: v = 3 × 10⁸ m/s in vacuum &nbsp;|&nbsp; v = fλ</div>
+<div class="laws">
+<div class="law"><div class="law-n">1</div><div><div class="law-t">Radio Waves (λ: km to cm)</div><div class="law-d">Radio & TV broadcasting, mobile phones, radar, microwave ovens. Longest wavelength, lowest frequency, least energy.</div></div></div>
+<div class="law"><div class="law-n">2</div><div><div class="law-t">Infrared (IR) Radiation</div><div class="law-d">Heat radiation. TV remote controls, night vision goggles, thermal cameras. All warm objects emit IR.</div></div></div>
+<div class="law"><div class="law-n">3</div><div><div class="law-t">Visible Light</div><div class="law-d">ROYGBIV: 400–700 nm. Optical fibres, photography, human vision. Only part we can see directly.</div></div></div>
+<div class="law"><div class="law-n">4</div><div><div class="law-t">Ultraviolet (UV)</div><div class="law-d">Causes sunburn. Used in: sterilisation, fluorescent lamps, detecting forged bank notes. Partially blocked by ozone layer.</div></div></div>
+<div class="law"><div class="law-n">5</div><div><div class="law-t">X-rays & Gamma Rays</div><div class="law-d">Highest frequency, shortest wavelength. X-rays: medical imaging. Gamma: cancer treatment, sterilising equipment. Most dangerous — ionising radiation.</div></div></div>
+</div>`,
+
+    applications:`<h2>📱 Wave Applications</h2>
+<h3>🎯 Learning Objectives</h3>
+<div class="l-obj"><div class="l-obj-dot">1</div><div class="l-obj-txt">Describe real-world applications of wave technology</div></div>
+<div class="l-obj"><div class="l-obj-dot">2</div><div class="l-obj-txt">Explain how mobile phones, Wi-Fi, and GPS use EM waves</div></div>
+<div class="apps">
+<div class="app"><div class="app-ico">📱</div><div class="app-t">Mobile Phones</div><div class="app-d">Use radio/microwave EM waves to transmit voice and data between handsets and towers.</div></div>
+<div class="app"><div class="app-ico">🛰️</div><div class="app-t">GPS</div><div class="app-d">Satellites send radio signals; receivers calculate position from time differences.</div></div>
+<div class="app"><div class="app-ico">🌐</div><div class="app-t">Wi-Fi</div><div class="app-d">Uses microwave EM waves (~2.4 GHz or 5 GHz) to transmit data wirelessly.</div></div>
+<div class="app"><div class="app-ico">🏥</div><div class="app-t">Medical Imaging</div><div class="app-d">X-rays for bones; ultrasound for soft tissues; MRI uses radio waves and magnets.</div></div>
+<div class="app"><div class="app-ico">🍕</div><div class="app-t">Microwave Oven</div><div class="app-d">Microwaves cause water molecules in food to vibrate, generating heat throughout.</div></div>
+<div class="app"><div class="app-ico">🎵</div><div class="app-t">Music Technology</div><div class="app-d">Sound waves converted to electrical signals, amplified, and converted back.</div></div>
+</div>
+<div class="sum-box"><div class="sum-t">🌊 Waves Module Summary</div><div class="sum-i"><div class="sum-dot"></div><div>v = fλ applies to all waves, including sound and light</div></div><div class="sum-i"><div class="sum-dot"></div><div>All EM waves travel at 3 × 10⁸ m/s in a vacuum</div></div><div class="sum-i"><div class="sum-dot"></div><div>Amplitude → energy; Frequency → pitch (sound) or colour (light)</div></div><div class="sum-i"><div class="sum-dot"></div><div>Echoes and TIR have crucial real-world applications</div></div></div>`,
+
+    quiz:`<h2>📝 Waves Module Quiz</h2>
+<p>Test your understanding of all Waves topics!</p>
+<div class="quiz-bar"><div class="q-track"><div class="q-fill" id="wq-fill" style="width:0%"></div></div><span class="q-badge" id="wq-ctr">Q 1 of 10</span><span class="q-score" id="wq-sc">Score: 0</span></div>
+<div id="wq-box"></div>
+<button class="q-next" id="wq-next" onclick="wqNext()">Next →</button>
+<div id="wq-final" style="display:none;"></div>`
+  };
+  return L[id]||`<h2>${id}</h2><p>Content coming soon.</p>`;
+}
+
+/* ════════ CALCULATORS ════════ */
+function spCalc(){const d=+document.getElementById('sp-d').value,t=+document.getElementById('sp-t').value;document.getElementById('sp-dv').textContent=d;document.getElementById('sp-tv').textContent=t;document.getElementById('sp-r').textContent=(d/t).toFixed(2)+' m/s';}
+function acCalc(){const u=+document.getElementById('ac-u').value,v=+document.getElementById('ac-v').value,t=+document.getElementById('ac-t').value;document.getElementById('ac-uv').textContent=u;document.getElementById('ac-vv').textContent=v;document.getElementById('ac-tv').textContent=t;document.getElementById('ac-r').textContent=((v-u)/t).toFixed(2)+' m/s²';}
+function nwCalc(){const m=+document.getElementById('nw-m').value,a=+document.getElementById('nw-a').value;document.getElementById('nw-mv').textContent=m;document.getElementById('nw-av').textContent=a;document.getElementById('nw-r').textContent=(m*a)+' N';}
+function mmCalc(){const m=+document.getElementById('mm-m').value,v=+document.getElementById('mm-v').value;document.getElementById('mm-mv').textContent=m;document.getElementById('mm-vv').textContent=v;document.getElementById('mm-r').textContent=(m*v)+' kg·m/s';}
+function enCalc(){const m=+document.getElementById('en-m').value,v=+document.getElementById('en-v').value;document.getElementById('en-mv').textContent=m;document.getElementById('en-vv').textContent=v;document.getElementById('en-r').textContent=(0.5*m*v*v).toFixed(0)+' J';}
+function wvCalc(){const f=+document.getElementById('wv-f').value,l=+document.getElementById('wv-l').value;document.getElementById('wv-fv').textContent=f;document.getElementById('wv-lv').textContent=l;document.getElementById('wv-r').textContent=(f*l)+' m/s';}
+function toggleScen(id){const el=document.getElementById(id);if(!el)return;el.classList.toggle('show');const b=el.previousElementSibling;if(b)b.textContent=el.classList.contains('show')?'🙈 Hide Solution':'💡 Show Solution';}
+
+/* ════════ MODULE QUIZZES ════════ */
+const MECH_Q=[
+  {q:"A 5 kg object accelerates at 3 m/s². Net force?",opts:["1.67 N","8 N","15 N","0.6 N"],ans:2,exp:"F = ma = 5 × 3 = 15 N."},
+  {q:"Which is a vector quantity?",opts:["Speed","Distance","Mass","Velocity"],ans:3,exp:"Velocity has magnitude and direction — it is a vector."},
+  {q:"Object falls 2 s (g=10 m/s²). Distance?",opts:["10 m","20 m","40 m","5 m"],ans:1,exp:"h = ½gt² = ½ × 10 × 4 = 20 m."},
+  {q:"Newton's First Law is the law of…",opts:["Acceleration","Gravity","Inertia","Reaction"],ans:2,exp:"Newton's First Law is the Law of Inertia."},
+  {q:"Momentum of a 4 kg object at 5 m/s?",opts:["0.8 kg·m/s","9 kg·m/s","20 kg·m/s","1.25 kg·m/s"],ans:2,exp:"p = mv = 4 × 5 = 20 kg·m/s."},
+  {q:"Pressure is defined as:",opts:["Mass per volume","Force per area","Work per time","Distance per time"],ans:1,exp:"P = F/A. Unit: Pascal (Pa)."},
+  {q:"Car at constant velocity. Net force?",opts:["Maximum","Equal to weight","Zero","Equal to friction"],ans:2,exp:"Constant velocity → zero acceleration → net force = 0."},
+  {q:"KE = ?",opts:["mgh","mv²","½mv²","Fd"],ans:2,exp:"Kinetic energy = ½mv²."},
+  {q:"Unit of work done:",opts:["Newton","Pascal","Joule","Watt"],ans:2,exp:"Work = Force × distance; unit is Joule (J)."},
+  {q:"Clockwise moments = anticlockwise moments. This is:",opts:["Newton's 3rd Law","Pascal's Law","Principle of Moments","Archimedes' Principle"],ans:2,exp:"Principle of Moments — condition for equilibrium."},
+];
+const OPTICS_Q=[
+  {q:"Angle of incidence = angle of reflection. This is:",opts:["Snell's Law","Law of reflection","TIR","Diffraction"],ans:1,exp:"The first law of reflection states i = r."},
+  {q:"Light from glass to air at critical angle:",opts:["Reflected back into glass","Passes straight through","Bends away","Absorbed"],ans:0,exp:"At angles ≥ critical angle, TIR occurs."},
+  {q:"A concave lens always produces images that are:",opts:["Real and inverted","Virtual and magnified","Virtual, upright, diminished","Real and enlarged"],ans:2,exp:"Concave (diverging) lenses always produce virtual, upright, diminished images."},
+  {q:"Refractive index n = ?",opts:["sin(r)/sin(i)","sin(i)/sin(r)","cos(i)/cos(r)","tan(i)/tan(r)"],ans:1,exp:"n = sin(i)/sin(r) — Snell's Law."},
+  {q:"Which mirror is used in car rear-view mirrors?",opts:["Plane","Concave","Convex","Parabolic"],ans:2,exp:"Convex mirrors give a wide field of view."},
+  {q:"Light bends towards normal entering:",opts:["Less dense medium","Same density","Denser medium","Vacuum"],ans:2,exp:"Light bends towards normal entering denser medium (air to glass)."},
+  {q:"Short-sightedness (myopia) is corrected with:",opts:["Convex lens","Concave lens","Plane mirror","Prism"],ans:1,exp:"Concave (diverging) lens corrects myopia."},
+  {q:"TIR requires light to travel from:",opts:["Less dense to denser","Denser to less dense","Air to glass","Any medium"],ans:1,exp:"TIR only occurs from denser to less dense medium."},
+  {q:"Critical angle for glass (n=1.5): sin(C) = ?",opts:["0.5","0.667","1.5","0.75"],ans:1,exp:"sin(C) = 1/n = 1/1.5 = 0.667. C ≈ 41.8°."},
+  {q:"Convex lens focal length 20 cm, object 30 cm away. Image distance?",opts:["60 cm","30 cm","20 cm","12 cm"],ans:0,exp:"1/v = 1/f - 1/u = 1/20 - 1/30 = 1/60. v = 60 cm."},
+];
+const WAVES_Q=[
+  {q:"Which wave travels through a vacuum?",opts:["Sound","Water waves","Electromagnetic","Seismic"],ans:2,exp:"EM waves travel at 3×10⁸ m/s through vacuum."},
+  {q:"v = 340 m/s, f = 170 Hz. Wavelength?",opts:["0.5 m","2 m","510 m","1 m"],ans:1,exp:"λ = v/f = 340/170 = 2 m."},
+  {q:"Loudness of sound is related to:",opts:["Frequency","Wavelength","Speed","Amplitude"],ans:3,exp:"Greater amplitude → more energy → louder sound."},
+  {q:"Sound cannot travel through:",opts:["Steel","Water","Air","Vacuum"],ans:3,exp:"Sound is a mechanical wave — it needs a medium."},
+  {q:"Ultrasound has frequency:",opts:["< 20 Hz","20–20,000 Hz","> 20,000 Hz","3×10⁸ Hz"],ans:2,exp:"Ultrasound is above 20,000 Hz."},
+  {q:"In refraction, what stays constant?",opts:["Speed","Wavelength","Frequency","Amplitude"],ans:2,exp:"Frequency stays constant during refraction."},
+  {q:"SONAR uses:",opts:["Light waves","Radio waves","Ultrasound","Gamma rays"],ans:2,exp:"SONAR uses ultrasound pulses and times their echoes."},
+  {q:"Period T of a wave with frequency 5 Hz?",opts:["5 s","0.2 s","0.5 s","25 s"],ans:1,exp:"T = 1/f = 1/5 = 0.2 s."},
+  {q:"Gamma rays have the highest:",opts:["Wavelength","Speed","Frequency","Amplitude"],ans:2,exp:"Gamma rays have highest frequency and shortest wavelength in EM spectrum."},
+  {q:"Sound travels fastest in:",opts:["Air","Water","Vacuum","Solids"],ans:3,exp:"Sound travels fastest in solids because particles are closer together."},
+];
+
+const mqStates={};
+function initMQ({box,fill,ctr,sc,nb,qs,finalId}){
+  const key=box;
+  mqStates[key]={qIdx:0,score:0,answered:false,qs,fill,ctr,sc,nb,finalId:finalId||(box.replace('box','final').replace('-box','-final'))};
+  renderMQ(key);
+}
+function renderMQ(key){
+  const s=mqStates[key];if(!s)return;
+  const q=s.qs[s.qIdx];s.answered=false;
+  if(document.getElementById(s.fill))document.getElementById(s.fill).style.width=(s.qIdx/s.qs.length*100)+'%';
+  if(document.getElementById(s.ctr))document.getElementById(s.ctr).textContent='Q '+(s.qIdx+1)+' of '+s.qs.length;
+  if(document.getElementById(s.sc))document.getElementById(s.sc).textContent='Score: '+s.score;
+  const nb=document.getElementById(s.nb);if(nb)nb.style.display='none';
+  const box=document.getElementById(key);if(!box)return;
+  box.innerHTML=`<div class="q-q">${q.q}</div><div class="q-opts">`+
+    q.opts.map((o,i)=>`<button class="q-opt" onclick="answerMQ('${key}',${i})">${o}</button>`).join('')+
+    `</div><div class="q-fb" id="${key}-fb"></div>`;
+}
+function answerMQ(key,i){
+  const s=mqStates[key];if(!s||s.answered)return;
+  s.answered=true;const q=s.qs[s.qIdx];const correct=i===q.ans;
+  if(correct)s.score++;
+  const opts=document.querySelectorAll('#'+key+' .q-opt');
+  opts[i].classList.add(correct?'correct':'wrong');
+  if(!correct)opts[q.ans].classList.add('correct');
+  opts.forEach(b=>b.disabled=true);
+  const fb=document.getElementById(key+'-fb');
+  if(fb){fb.textContent=q.exp;fb.className='q-fb show '+(correct?'ok':'no');}
+  if(document.getElementById(s.fill))document.getElementById(s.fill).style.width=((s.qIdx+1)/s.qs.length*100)+'%';
+  const nb=document.getElementById(s.nb);
+  if(nb){nb.style.display='inline-block';nb.textContent=s.qIdx<s.qs.length-1?'Next →':'See Results 🏆';}
+}
+function advanceMQ(key){
+  const s=mqStates[key];if(!s)return;
+  if(s.qIdx<s.qs.length-1){s.qIdx++;renderMQ(key);}else showMQFinal(key);
+}
+function showMQFinal(key){
+  const s=mqStates[key];if(!s)return;
+  const pct=Math.round(s.score/s.qs.length*100);
+  const grade=pct>=80?'Excellent! 🏆':pct>=60?'Good Job! 🎉':'Keep Practising! 📚';
+  const color=pct>=80?'var(--green)':pct>=60?'var(--blue)':'var(--red)';
+  const box=document.getElementById(key);if(box)box.style.display='none';
+  const nb=document.getElementById(s.nb);if(nb)nb.style.display='none';
+  const fin=document.getElementById(s.finalId);if(!fin)return;
+  fin.style.display='block';
+  fin.innerHTML=`<div class="q-final"><div style="font-size:52px;margin-bottom:12px;">${pct>=60?'🏆':'📚'}</div>
+    <div style="font-size:19px;font-weight:700;color:${color};margin-bottom:6px;">${grade}</div>
+    <div style="font-size:34px;font-weight:900;color:var(--blue);">${s.score}/${s.qs.length}</div>
+    <div style="font-size:14px;color:var(--text2);margin-top:8px;">${pct}%</div>
+    <button class="btn-pr" style="margin-top:18px;" onclick="restartMQ('${key}')">🔁 Try Again</button></div>`;
+}
+function restartMQ(key){
+  const s=mqStates[key];if(!s)return;
+  s.qIdx=0;s.score=0;
+  const fin=document.getElementById(s.finalId);if(fin)fin.style.display='none';
+  const box=document.getElementById(key);if(box)box.style.display='block';
+  renderMQ(key);
+}
+function mqNext(){advanceMQ('mq-box');}
+function oqNext(){advanceMQ('oq-box');}
+function wqNext(){advanceMQ('wq-box');}
+
+/* ════════════════════════════════
+   EXPERIMENTS
+════════════════════════════════ */
+let hTrial=1,rTrial=1,eTrial=1;
+let hChart=null,rChart=null,eChart=null;
+let chartLoaded=false;
+
+function openExp(id){
+  document.getElementById('exp-select').style.display='none';
+  document.querySelectorAll('.exp-detail').forEach(d=>d.classList.remove('active'));
+  document.getElementById('exp-'+id).classList.add('active');
+  setTimeout(()=>{
+    if(id==='hooke')hookeUpdate();
+    if(id==='refraction')refractionUpdate();
+    if(id==='echo'){echoUpdate();startEchoAnim();}
+  },80);
+}
+function closeExp(){
+  document.getElementById('exp-select').style.display='block';
+  document.querySelectorAll('.exp-detail').forEach(d=>d.classList.remove('active'));
+}
+function hookeInit(){hookeUpdate();}
+function refractionInit(){refractionUpdate();}
+function echoInit(){echoUpdate();}
+
+/* HOOKE */
+function hookeUpdate(){
+  const mass=+document.getElementById('h-mass').value;
+  const k=+document.getElementById('h-k').value;
+  const F=mass/1000*9.81,x=F/k;
+  document.getElementById('h-mv').textContent=mass+' g';
+  document.getElementById('h-kv').textContent=k+' N/m';
+  document.getElementById('h-force').textContent=F.toFixed(2);
+  document.getElementById('h-ext').textContent=x.toFixed(3);
+  document.getElementById('h-kout').textContent=k;
+  drawHooke(mass,k,x);
+}
+function drawHooke(mass,k,x){
+  const c=document.getElementById('hookeCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=dark?'#1c2236':'#f7f8fc';ctx.fillRect(0,0,W,H);
+  // ceiling
+  ctx.fillStyle='#64748b';ctx.fillRect(170,18,120,14);
+  const cx=230,springTop=32,springLen=60+Math.min(x*700,140);
+  // spring
+  ctx.beginPath();ctx.moveTo(cx,springTop);
+  const coils=10;
+  for(let i=0;i<=coils*4;i++){
+    const t=i/(coils*4),y=springTop+t*springLen,dx=22*Math.sin(i*Math.PI/2);
+    i===0?ctx.moveTo(cx,springTop):ctx.lineTo(cx+dx,y);
+  }
+  ctx.strokeStyle='#2563eb';ctx.lineWidth=2.5;ctx.stroke();
+  // mass
+  ctx.fillStyle='#2563eb';ctx.fillRect(cx-32,springTop+springLen,64,52);
+  ctx.fillStyle='#fff';ctx.font='bold 13px Plus Jakarta Sans';ctx.textAlign='center';
+  ctx.fillText(mass+'g',cx,springTop+springLen+30);
+  // labels
+  ctx.fillStyle=dark?'#7b8db5':'#64748b';ctx.font='12px Plus Jakarta Sans';ctx.textAlign='left';
+  ctx.fillText('F = '+F.toFixed(2)+' N',300,80);
+  ctx.fillText('x = '+x.toFixed(3)+' m',300,100);
+  ctx.fillText('k = '+k+' N/m',300,120);
+}
+function hookeRecord(){
+  const mass=+document.getElementById('h-mass').value,k=+document.getElementById('h-k').value;
+  const F=mass/1000*9.81,x=F/k;
+  document.getElementById('hooke-tb').innerHTML+=`<tr><td>${hTrial++}</td><td>${mass}</td><td>${F.toFixed(2)}</td><td>${x.toFixed(3)}</td><td>${k}</td></tr>`;
+}
+function hookeGraph(){
+  loadChart(()=>{
+    document.getElementById('hooke-graph').style.display='block';
+    const rows=[...document.querySelectorAll('#hooke-tb tr')];
+    const pts=rows.map(r=>({x:+r.cells[3].textContent,y:+r.cells[2].textContent}));
+    if(!hChart)hChart=new Chart(document.getElementById('hookeChart'),{type:'scatter',data:{datasets:[{label:'Force vs Extension',data:pts,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.1)',showLine:true,tension:.2,pointRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#4b5568'}}},scales:{x:{title:{display:true,text:'Extension x (m)'},beginAtZero:true},y:{title:{display:true,text:'Force F (N)'},beginAtZero:true}}}});
+    else{hChart.data.datasets[0].data=pts;hChart.update();}
+  });
+}
+function hookeReset(){hTrial=1;document.getElementById('hooke-tb').innerHTML='';document.getElementById('hooke-graph').style.display='none';}
+
+/* REFRACTION */
+function refractionUpdate(){
+  const iDeg=+document.getElementById('ref-i').value;
+  const n=+document.getElementById('ref-n').value/100;
+  const rRad=Math.asin(Math.sin(iDeg*Math.PI/180)/n),rDeg=rRad*180/Math.PI;
+  document.getElementById('ref-iv').textContent=iDeg+'°';
+  document.getElementById('ref-nv').textContent=n.toFixed(2);
+  document.getElementById('ref-iout').textContent=iDeg+'°';
+  document.getElementById('ref-rout').textContent=rDeg.toFixed(1)+'°';
+  document.getElementById('ref-nout').textContent=n.toFixed(2);
+  drawRefraction(iDeg,rDeg,n);
+}
+function drawRefraction(iDeg,rDeg,n){
+  const c=document.getElementById('refractionCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='rgba(219,234,254,.25)';ctx.fillRect(0,0,W,H/2);
+  ctx.fillStyle='rgba(167,243,208,.2)';ctx.fillRect(0,H/2,W,H/2);
+  ctx.fillStyle='#2563eb';ctx.font='bold 13px Plus Jakarta Sans';ctx.textAlign='left';ctx.fillText('AIR (n=1.0)',10,24);
+  ctx.fillStyle='#0d9488';ctx.fillText('GLASS (n='+n.toFixed(2)+')',10,H/2+24);
+  const cx=W/2,cy=H/2;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.strokeStyle='#94a3b8';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy-120);ctx.lineTo(cx,cy+130);ctx.strokeStyle='#cbd5e1';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.stroke();ctx.setLineDash([]);
+  const iR=iDeg*Math.PI/180;
+  ctx.beginPath();ctx.moveTo(cx-Math.sin(iR)*110,cy-Math.cos(iR)*110);ctx.lineTo(cx,cy);ctx.strokeStyle='#f59e0b';ctx.lineWidth=2.5;ctx.stroke();
+  const rR=rDeg*Math.PI/180;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.sin(rR)*130,cy+Math.cos(rR)*130);ctx.strokeStyle='#7c3aed';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle='#f59e0b';ctx.font='12px Plus Jakarta Sans';ctx.textAlign='center';
+  ctx.fillText('i='+iDeg+'°',cx-Math.sin(iR)*55,cy-Math.cos(iR)*50+4);
+  ctx.fillStyle='#7c3aed';ctx.fillText('r='+rDeg.toFixed(1)+'°',cx+Math.sin(rR)*70,cy+Math.cos(rR)*60);
+}
+function refractionRecord(){
+  const iDeg=+document.getElementById('ref-i').value,n=+document.getElementById('ref-n').value/100;
+  const rRad=Math.asin(Math.sin(iDeg*Math.PI/180)/n),rDeg=rRad*180/Math.PI;
+  const si=Math.sin(iDeg*Math.PI/180),sr=Math.sin(rRad);
+  document.getElementById('refraction-tb').innerHTML+=`<tr><td>${rTrial++}</td><td>${iDeg}</td><td>${rDeg.toFixed(1)}</td><td>${si.toFixed(3)}</td><td>${sr.toFixed(3)}</td><td>${(si/sr).toFixed(2)}</td></tr>`;
+}
+function refractionGraph(){
+  loadChart(()=>{
+    document.getElementById('refraction-graph').style.display='block';
+    const rows=[...document.querySelectorAll('#refraction-tb tr')];
+    const pts=rows.map(r=>({x:+r.cells[4].textContent,y:+r.cells[3].textContent}));
+    if(!rChart)rChart=new Chart(document.getElementById('refractionChart'),{type:'scatter',data:{datasets:[{label:'sin(i) vs sin(r)',data:pts,borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,.1)',showLine:true,tension:.1,pointRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#4b5568'}}},scales:{x:{title:{display:true,text:'sin(r)'},beginAtZero:true},y:{title:{display:true,text:'sin(i)'},beginAtZero:true}}}});
+    else{rChart.data.datasets[0].data=pts;rChart.update();}
+  });
+}
+function refractionReset(){rTrial=1;document.getElementById('refraction-tb').innerHTML='';document.getElementById('refraction-graph').style.display='none';}
+
+/* ECHO */
+let echoPhase=0,echoAnimId=null;
+function echoUpdate(){
+  const d=+document.getElementById('echo-d').value,temp=+document.getElementById('echo-temp').value;
+  const v=331+0.6*temp,t=2*d/v;
+  document.getElementById('echo-dv').textContent=d+' m';
+  document.getElementById('echo-tv').textContent=temp+'°C';
+  document.getElementById('echo-dout').textContent=d;
+  document.getElementById('echo-tout').textContent=t.toFixed(3);
+  document.getElementById('echo-vout').textContent=v.toFixed(0);
+}
+function startEchoAnim(){
+  if(echoAnimId)cancelAnimationFrame(echoAnimId);
+  function frame(){
+    echoPhase+=0.03;drawEcho();
+    const detail=document.getElementById('exp-echo');
+    if(detail&&detail.classList.contains('active'))echoAnimId=requestAnimationFrame(frame);
+  }
+  echoAnimId=requestAnimationFrame(frame);
+}
+function drawEcho(){
+  const c=document.getElementById('echoCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=dark?'#1c2236':'#f0f9ff';ctx.fillRect(0,0,W,H);
+  // person
+  ctx.fillStyle='#2563eb';ctx.beginPath();ctx.arc(55,H/2-22,14,0,Math.PI*2);ctx.fill();
+  ctx.fillRect(46,H/2-8,18,32);
+  ctx.fillStyle=dark?'#7b8db5':'#4b5568';ctx.font='11px Plus Jakarta Sans';ctx.textAlign='center';ctx.fillText('You',55,H/2+36);
+  // wall
+  ctx.fillStyle='#64748b';ctx.fillRect(420,14,22,H-28);
+  ctx.fillStyle=dark?'#7b8db5':'#4b5568';ctx.fillText('Wall',431,H-6);
+  // waves
+  const waveX=55+(365*((Math.sin(echoPhase)+1)/2));
+  for(let i=0;i<4;i++){
+    const wx=55+(waveX-55)*((4-i)/4);
+    if(wx>60&&wx<415){
+      ctx.beginPath();ctx.arc(wx,H/2-22,10+i*9,Math.PI*1.2,Math.PI*1.8);
+      ctx.strokeStyle=`rgba(37,99,235,${0.7-i*0.15})`;ctx.lineWidth=2;ctx.stroke();
+    }
+  }
+  const d=+document.getElementById('echo-d').value;
+  ctx.fillStyle='#dc2626';ctx.font='bold 12px Plus Jakarta Sans';ctx.textAlign='center';
+  ctx.fillText('d = '+d+' m',235,H-8);
+  ctx.beginPath();ctx.moveTo(55,H-22);ctx.lineTo(420,H-22);
+  ctx.strokeStyle='rgba(220,38,38,.4)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+}
+function echoRecord(){
+  const d=+document.getElementById('echo-d').value,temp=+document.getElementById('echo-temp').value;
+  const v=331+0.6*temp,t=2*d/v;
+  document.getElementById('echo-tb').innerHTML+=`<tr><td>${eTrial++}</td><td>${d}</td><td>${t.toFixed(3)}</td><td>${v.toFixed(1)}</td></tr>`;
+}
+function echoGraph(){
+  loadChart(()=>{
+    document.getElementById('echo-graph').style.display='block';
+    const rows=[...document.querySelectorAll('#echo-tb tr')];
+    const pts=rows.map(r=>({x:+r.cells[1].textContent,y:+r.cells[2].textContent}));
+    if(!eChart)eChart=new Chart(document.getElementById('echoChart'),{type:'scatter',data:{datasets:[{label:'Distance vs Time',data:pts,borderColor:'#0d9488',backgroundColor:'rgba(13,148,136,.1)',showLine:true,tension:.1,pointRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#4b5568'}}},scales:{x:{title:{display:true,text:'Distance d (m)'},beginAtZero:true},y:{title:{display:true,text:'Time t (s)'},beginAtZero:true}}}});
+    else{eChart.data.datasets[0].data=pts;eChart.update();}
+  });
+}
+function echoReset(){eTrial=1;document.getElementById('echo-tb').innerHTML='';document.getElementById('echo-graph').style.display='none';}
+function loadChart(cb){
+  if(window.Chart){cb();return;}
+  if(chartLoaded){setTimeout(()=>{if(window.Chart)cb();},200);return;}
+  chartLoaded=true;
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+  s.onload=cb;document.head.appendChild(s);
+}
+
+/* ════════════════════════════════
+   PROJECTS
+════════════════════════════════ */
+const PROJECTS={
+  hydraulic:{title:'Hydraulic Lift',concept:'💧 Pressure & Pascal\'s Principle',grad:'linear-gradient(135deg,#0f2460,#2563eb)',diff:'Intermediate',time:'45 min',xp:'80 XP',badge:'💧',
+    obj:['Understand Pascal\'s Principle: pressure applied to a fluid is transmitted equally in all directions','Build a working model of a hydraulic lift','Relate this to real hydraulics: car brakes, JCB excavators, lifts'],
+    why:'Hydraulic machines multiply force. A small force on a small piston can lift a car on a large piston.',
+    formula:'P = F/A &nbsp;|&nbsp; F₂/F₁ = A₂/A₁',
+    mats:['Two large syringes (10 ml and 30 ml)','Plastic tubing or a straw','Water or cooking oil','Cardboard for the platform','Tape','Small load to lift (eraser, bottle top)'],
+    steps:[
+      {t:'Prepare the Syringes',d:'Fill both syringes completely with water to remove all air bubbles. Connect them with plastic tubing.',tip:'Air in the tube will make the system compressible — water is incompressible.'},
+      {t:'Test Transmission',d:'Push the small syringe plunger and observe the large syringe. Fluid pressure is transmitted through the tubing.',tip:'Keep tubing at the same height as syringes.'},
+      {t:'Build the Platform',d:'Tape a small cardboard platform on top of the large syringe plunger. This is the "lift".',tip:'Make sure the platform is balanced.'},
+      {t:'Load and Lift',d:'Place a small object on the platform. Push the small syringe plunger and observe the object being lifted.',tip:'Notice a small push on the small syringe causes large movement.'},
+      {t:'Analyse Results',d:'Calculate the mechanical advantage: MA = A₂/A₁ (ratio of cross-sectional areas).',tip:'If A₂ is 3× larger than A₁, output force is 3× input force.'},
+    ],
+    qs:[
+      {q:"Pascal's Principle states pressure applied to a fluid is:",opts:["Lost as heat","Transmitted equally in all directions","Only transmitted upward","Halved"],ans:1,exp:"Pascal's Principle: pressure is transmitted equally in all directions in a fluid."},
+      {q:"Pistons of area 4 cm² and 20 cm². Input force = 50 N. Output force?",opts:["10 N","250 N","200 N","50 N"],ans:1,exp:"F₂ = F₁ × A₂/A₁ = 50 × (20/4) = 250 N."},
+      {q:"Why must the fluid in a hydraulic system be a liquid?",opts:["Liquids are transparent","Liquids are incompressible","Gases are cheaper","Gases are colourful"],ans:1,exp:"Liquids are nearly incompressible — pressure transmitted without energy loss."},
+    ]
+  },
+  periscope:{title:'Periscope',concept:'🔭 Reflection of Light',grad:'linear-gradient(135deg,#2d0a6e,#7c3aed)',diff:'Beginner',time:'30 min',xp:'60 XP',badge:'🔭',
+    obj:['Apply the Law of Reflection to build a periscope','Understand how two mirrors at 45° redirect light by 90°','Know real-world uses of periscopes'],
+    why:'Submarines use periscopes to observe above water. Also used in trenches and over crowds.',
+    formula:'Angle of incidence = Angle of reflection (i = r)',
+    mats:['Two small flat mirrors (about 8 cm × 8 cm)','A long cardboard box or tube (≥ 30 cm)','Ruler','Protractor','Scissors/craft knife','Tape'],
+    steps:[
+      {t:'Prepare the Box',d:'Take a long rectangular cardboard box. Cut two rectangular slots: one at each end, on opposite sides.',tip:'Slots should be large enough to see through comfortably.'},
+      {t:'Mark 45° Angles',d:"Inside the box, mark lines at 45° to the base at each end. These are where the mirrors will be placed.",tip:'Use a protractor for accuracy. 45° is critical for the periscope to work.'},
+      {t:'Fix the Mirrors',d:'Attach each mirror at 45° to the horizontal, reflecting surfaces facing each other. Secure with tape.',tip:'If mirrors are not exactly at 45°, the image will be distorted or missing.'},
+      {t:'Test the Periscope',d:'Hold the periscope vertically. Look through the bottom slot. You should see what is above the top slot.',tip:'Try using it to look over a wall or fence!'},
+      {t:'Trace the Ray Path',d:'Draw a diagram showing: ray enters top slot → reflects off top mirror at 45° → travels down → reflects off bottom mirror → exits to eye.',tip:'At each mirror: angle in = angle out.'},
+    ],
+    qs:[
+      {q:"Why must each mirror be at exactly 45°?",opts:["For decoration","So light reflects at 90° and travels straight down","To magnify the image","To make it waterproof"],ans:1,exp:"At 45°, i = 45°, so r = 45°. The reflected ray turns 90° directly into the tube."},
+      {q:"What type of image does a plane mirror form?",opts:["Real, inverted","Virtual, upright, same size","Real, magnified","Virtual, inverted"],ans:1,exp:"Plane mirror: virtual, upright, same size as object, laterally inverted."},
+      {q:"The periscope uses which property of light?",opts:["Refraction","Diffraction","Reflection","Absorption"],ans:2,exp:"A periscope works by reflecting light using two plane mirrors."},
+    ]
+  },
+  speaker:{title:'Simple Speaker',concept:'🔊 Electromagnetism & Sound',grad:'linear-gradient(135deg,#0d4a3a,#0d9488)',diff:'Intermediate',time:'40 min',xp:'75 XP',badge:'🔊',
+    obj:['Understand how a loudspeaker converts electrical energy to sound','Build a functional speaker using a coil, magnet, and cone','Connect electromagnetic induction to real devices'],
+    why:'Every loudspeaker, earphone, and headphone works on this principle — electrical current causes a coil to vibrate, moving air to create sound.',
+    formula:'F = BIL (force on current-carrying conductor in magnetic field)',
+    mats:['Strong permanent magnet (neodymium is best)','Enamelled copper wire (~2 m, 0.5 mm)','Paper or polystyrene cup (for cone)','Audio cable or crocodile wires','Small audio amplifier or phone','Sandpaper or wire strippers'],
+    steps:[
+      {t:'Wind the Voice Coil',d:'Wind about 50 turns of enamelled copper wire around a cylinder (coin or marker). Leave 15 cm free at each end.',tip:'Keep the coil tight and uniform. More turns = stronger effect.'},
+      {t:'Strip the Wire Ends',d:'Sand the ends of the wire to remove the enamel insulation. Strip about 2 cm at each end.',tip:'Test with a multimeter: should see resistance of 4–8 Ω.'},
+      {t:'Attach the Cone',d:'Tape the coil to the bottom of the paper cup (cone). The cup amplifies the vibrations into sound waves.',tip:'Secure the coil at the very centre of the cup base.'},
+      {t:'Position the Magnet',d:'Place the permanent magnet inside the coil or very close to it. The coil must be able to move freely.',tip:'The coil must not touch the magnet — it needs to vibrate freely.'},
+      {t:'Connect and Test',d:'Connect the coil ends to a small audio amplifier or phone audio output. Play music and listen!',tip:'If no sound, check wire connections and try reversing the polarity.'},
+    ],
+    qs:[
+      {q:"In a loudspeaker, alternating current causes the coil to:",opts:["Stay still","Vibrate back and forth","Spin continuously","Heat up only"],ans:1,exp:"AC current alternates direction, causing the coil to vibrate in and out of the magnetic field."},
+      {q:"What converts coil vibrations into audible sound?",opts:["The magnet","The wire","The paper cone","The current"],ans:2,exp:"The paper cone moves with the coil and pushes/pulls air, creating sound waves."},
+      {q:"The force on a current-carrying coil in a magnetic field is:",opts:["F = mv","F = qE","F = BIL","F = ρgh"],ans:2,exp:"F = BIL — force depends on magnetic field B, current I, and length of conductor L."},
+    ]
+  }
+};
+
+let projSteps={},projQScores={},projAnswered={};
+
+function openProject(id){
+  const p=PROJECTS[id];
+  if(!projSteps[id])projSteps[id]=new Array(p.steps.length).fill(false);
+  if(!projQScores[id])projQScores[id]=0;
+  if(!projAnswered[id])projAnswered[id]=new Array(p.qs.length).fill(false);
+  document.getElementById('proj-select').style.display='none';
+  document.getElementById('proj-detail').style.display='block';
+  renderProject(id);window.scrollTo(0,0);
+}
+function closeProject(){
+  document.getElementById('proj-select').style.display='block';
+  document.getElementById('proj-detail').style.display='none';
+  document.getElementById('proj-detail').innerHTML='';
+}
+function renderProject(id){
+  const p=PROJECTS[id];
+  const mats=p.mats.map(m=>`<div class="mat">${m}</div>`).join('');
+  const steps=p.steps.map((s,i)=>{
+    const done=projSteps[id][i];
+    return`<div class="step-card${done?' done':''}" id="sc-${id}-${i}">
+      <div class="sc-head">
+        <div class="sc-badge${done?' done':''}" id="scb-${id}-${i}">${done?'✓':(i+1)}</div>
+        <div class="sc-ttl">${s.t}</div>
+        <button class="sc-done-btn${done?' done':''}" onclick="markStep('${id}',${i})">${done?'✓ Done':'Mark Done'}</button>
+      </div>
+      <div class="sc-desc">${s.d}</div>
+      ${s.tip?`<div class="sc-tip">💡 ${s.tip}</div>`:''}
+    </div>`;
+  }).join('');
+  const qHTML=p.qs.map((q,qi)=>{
+    const answered=projAnswered[id][qi];
+    const opts=q.opts.map((o,oi)=>`<button class="q-opt${answered&&oi===q.ans?' correct':''}" id="pqo-${id}-${qi}-${oi}" onclick="answerProjQ('${id}',${qi},${oi})" ${answered?'disabled':''}>${o}</button>`).join('');
+    return`<div style="margin-bottom:20px;"><div class="q-q">${q.q}</div><div class="q-opts">${opts}</div>
+      <div class="q-fb${answered?' show ok':''}" id="pqf-${id}-${qi}">${answered?q.exp:''}</div></div>`;
+  }).join('');
+
+  document.getElementById('proj-detail').innerHTML=`
+    <button class="back-btn" onclick="closeProject()">← Back to Projects</button>
+    <div class="proj-det-hdr" style="background:${p.grad}">
+      <div style="font-family:var(--font-display);font-size:23px;font-weight:900;">${p.title}</div>
+      <div style="font-size:13px;opacity:.85;margin-top:5px;">${p.concept}</div>
+      <div class="p-chips"><span class="p-chip">📊 ${p.diff}</span><span class="p-chip">⏱ ${p.time}</span><span class="p-chip">🏆 ${p.xp}</span></div>
+    </div>
+    <div class="tabs" id="proj-tabs">
+      <button class="tab active" onclick="projTab(this,'pov-${id}','${id}')">📋 Overview</button>
+      <button class="tab" onclick="projTabG(this,'pst-${id}','${id}',1)">🧪 Steps</button>
+      <button class="tab" onclick="projTabG(this,'prf-${id}','${id}',2)">🧠 Reflect</button>
+      <button class="tab" onclick="projTabG(this,'prw-${id}','${id}',3)">🏆 Reward</button>
+    </div>
+    <div class="locked-notice" id="plk-${id}">⚠️ Complete and mark all steps before unlocking.</div>
+    <div class="locked-notice" id="pqlk-${id}">⚠️ Answer all questions in Reflect first.</div>
+    <div class="panel active" id="pov-${id}">
+      <div class="card"><div class="card-ttl">📚 What You Will Learn</div>
+        ${p.obj.map(o=>`<div class="l-obj"><div class="l-obj-dot">✓</div><div class="l-obj-txt">${o}</div></div>`).join('')}
+      </div>
+      <div class="info-box">💡 <strong>Why it matters:</strong> ${p.why}</div>
+      <div class="formula-box">${p.formula}</div>
+      <div class="card-ttl" style="margin:18px 0 10px;">🛠️ Materials Needed</div>
+      <div class="mats">${mats}</div>
+      <button class="btn-pr" style="margin-top:14px;" onclick="projTabG(null,'pst-${id}','${id}',1)">Start Project →</button>
+    </div>
+    <div class="panel" id="pst-${id}">${steps}
+      <div id="psp-${id}" style="font-size:13px;color:var(--text2);margin:14px 0;font-weight:600;"></div>
+      <button class="btn-pr" onclick="projTabG(null,'prf-${id}','${id}',2)">Test Your Knowledge →</button>
+    </div>
+    <div class="panel" id="prf-${id}">
+      <div class="card"><div class="card-ttl">🧠 Reflection Questions</div>${qHTML}</div>
+      <button class="btn-pr" onclick="projTabG(null,'prw-${id}','${id}',3)">Claim Your Reward →</button>
+    </div>
+    <div class="panel" id="prw-${id}"><div id="prwc-${id}"></div></div>`;
+  updateProjProg(id);
+}
+function projTab(btn,panelId,id){
+  document.getElementById('proj-detail').querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('proj-detail').querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const p=document.getElementById(panelId);if(p)p.classList.add('active');
+}
+function projTabG(btn,panelId,id,level){
+  const lk=document.getElementById('plk-'+id),qk=document.getElementById('pqlk-'+id);
+  if(lk)lk.classList.remove('show');if(qk)qk.classList.remove('show');
+  if(level>=2&&!projAllSteps(id)){if(lk)lk.classList.add('show');return;}
+  if(level>=3&&!projAllQ(id)){if(qk)qk.classList.add('show');return;}
+  if(level===3)buildReward(id);
+  if(!btn){const tabs=document.getElementById('proj-detail').querySelectorAll('.tab');btn=tabs[level]||null;}
+  projTab(btn,panelId,id);
+}
+function projAllSteps(id){return projSteps[id]&&projSteps[id].every(Boolean);}
+function projAllQ(id){return projAnswered[id]&&projAnswered[id].every(Boolean);}
+function markStep(id,i){
+  if(projSteps[id][i])return;projSteps[id][i]=true;
+  const card=document.getElementById('sc-'+id+'-'+i),badge=document.getElementById('scb-'+id+'-'+i);
+  if(card)card.classList.add('done');
+  if(badge){badge.classList.add('done');badge.textContent='✓';}
+  const btn=card?.querySelector('.sc-done-btn');
+  if(btn){btn.classList.add('done');btn.textContent='✓ Done';}
+  updateProjProg(id);
+}
+function updateProjProg(id){
+  const done=projSteps[id].filter(Boolean).length,total=PROJECTS[id].steps.length;
+  const el=document.getElementById('psp-'+id);if(el)el.textContent=`Progress: ${done} / ${total} steps completed`;
+}
+function answerProjQ(id,qi,oi){
+  if(projAnswered[id][qi])return;projAnswered[id][qi]=true;
+  const q=PROJECTS[id].qs[qi];const correct=oi===q.ans;
+  if(correct)projQScores[id]=(projQScores[id]||0)+1;
+  for(let i=0;i<q.opts.length;i++){
+    const opt=document.getElementById('pqo-'+id+'-'+qi+'-'+i);
+    if(opt){opt.disabled=true;opt.classList.remove('correct','wrong');if(i===q.ans)opt.classList.add('correct');else if(i===oi)opt.classList.add('wrong');}
+  }
+  const fb=document.getElementById('pqf-'+id+'-'+qi);
+  if(fb){fb.textContent=q.exp;fb.className='q-fb show '+(correct?'ok':'no');}
+}
+function buildReward(id){
+  const p=PROJECTS[id];const score=projQScores[id]||0,total=p.qs.length,pct=Math.round(score/total*100);
+  const grade=pct===100?'Perfect Score! 🏆':pct>=67?'Great Job! 🎉':'Keep Practising! 📚';
+  const el=document.getElementById('prwc-'+id);if(!el)return;
+  el.innerHTML=`<div class="reward-box">
+    <div style="font-size:58px;margin-bottom:14px;">${p.badge}</div>
+    <div style="font-family:var(--font-display);font-size:23px;font-weight:900;margin-bottom:6px;">${p.title} Badge</div>
+    <div style="font-size:14px;opacity:.85;margin-bottom:18px;">You earned <strong>${p.xp}</strong>!</div>
+    <div style="background:rgba(255,255,255,.18);border-radius:12px;padding:18px;margin-bottom:18px;">
+      <div style="font-size:34px;font-weight:900;">${score} / ${total}</div>
+      <div style="opacity:.85;">${pct}% — ${grade}</div>
+    </div>
+    <button class="btn-ol" style="color:#fff;border-color:rgba(255,255,255,.4);" onclick="closeProject()">← Back to Projects</button>
+  </div>`;
+}
+
+/* ════════════════════════════════
+   MAIN QUIZZES (20 questions, timed)
+════════════════════════════════ */
+const QUIZ_BANKS={
+  mechanics:[
+    {q:"Which of the following is a vector quantity?",opts:["Speed","Distance","Weight","Mass"],ans:2,exp:"Weight (force of gravity) has both magnitude and direction — it is a vector."},
+    {q:"An object accelerates at 4 m/s² with mass 6 kg. Net force?",opts:["1.5 N","10 N","24 N","2 N"],ans:2,exp:"F = ma = 6 × 4 = 24 N."},
+    {q:"Car: u=0, v=25 m/s, t=5 s. Acceleration?",opts:["5 m/s²","125 m/s²","0.2 m/s²","20 m/s²"],ans:0,exp:"a = (v-u)/t = 25/5 = 5 m/s²."},
+    {q:"Newton's First Law describes the law of…",opts:["Acceleration","Gravity","Inertia","Reaction"],ans:2,exp:"Newton's First Law is the Law of Inertia."},
+    {q:"Momentum of 6 kg at 4 m/s?",opts:["1.5 kg·m/s","10 kg·m/s","24 kg·m/s","2 kg·m/s"],ans:2,exp:"p = mv = 6 × 4 = 24 kg·m/s."},
+    {q:"Pressure unit:",opts:["Newton","Joule","Pascal","Watt"],ans:2,exp:"Pressure is measured in Pascals (Pa = N/m²)."},
+    {q:"KE = ?",opts:["mgh","mv²","½mv²","Fv"],ans:2,exp:"Kinetic energy = ½mv²."},
+    {q:"Work done unit:",opts:["Newton","Pascal","Joule","Watt"],ans:2,exp:"Work = Force × distance; unit is Joule (J)."},
+    {q:"Objects float when their density is:",opts:["Greater than water","Equal to water","Less than water","Zero"],ans:2,exp:"Objects float when their density is less than the fluid they are in."},
+    {q:"Moment = ?",opts:["Force × time","Force × area","Force × distance","Mass × velocity"],ans:2,exp:"Moment = Force × perpendicular distance from pivot."},
+    {q:"Car constant velocity. Net force?",opts:["Maximum","Zero","Equal to weight","Equal to friction"],ans:1,exp:"Constant velocity → zero acceleration → net force = 0."},
+    {q:"Power = ?",opts:["Force × distance","Work / time","Mass × acceleration","Voltage × resistance"],ans:1,exp:"Power = Work done ÷ time. Unit: Watt (W)."},
+    {q:"In an elastic collision:",opts:["Only momentum conserved","Only KE conserved","Both momentum and KE conserved","Neither conserved"],ans:2,exp:"Elastic collisions conserve both momentum and kinetic energy."},
+    {q:"Ball dropped 5 s (g = 10 m/s²). Final velocity?",opts:["10 m/s","50 m/s","25 m/s","5 m/s"],ans:1,exp:"v = gt = 10 × 5 = 50 m/s."},
+    {q:"Principle of moments condition:",opts:["Sum of all forces = 0","Clockwise moments = anticlockwise moments","Velocity = 0","Weight = Normal reaction"],ans:1,exp:"Principle of Moments: sum of clockwise moments = sum of anticlockwise moments."},
+    {q:"PE = mgh. If h doubles, PE?",opts:["Stays same","Halves","Doubles","Quadruples"],ans:2,exp:"PE = mgh. If h doubles, PE doubles (directly proportional)."},
+    {q:"Impulse = ?",opts:["F × a","m × a","F × t","m × v²"],ans:2,exp:"Impulse = Force × time = change in momentum."},
+    {q:"Weight of 5 kg object (g = 9.8 m/s²)?",opts:["5 N","49 N","9.8 N","0.51 N"],ans:1,exp:"W = mg = 5 × 9.8 = 49 N."},
+    {q:"Object moving at constant speed in a circle. What is true?",opts:["No force needed","Force towards centre","Force away from centre","Force is zero"],ans:1,exp:"Centripetal force acts towards the centre of the circle."},
+    {q:"Two objects: 10 kg at 3 m/s and 5 kg at rest collide and stick. Final velocity?",opts:["3 m/s","2 m/s","1.5 m/s","1 m/s"],ans:1,exp:"p_before = 10×3 = 30 kg·m/s. (10+5)×v = 30. v = 2 m/s."},
+  ],
+  optics:[
+    {q:"Law of reflection states:",opts:["i + r = 90°","i = r","n = sin(i)/sin(r)","i × r = 90"],ans:1,exp:"The angle of incidence equals the angle of reflection."},
+    {q:"Refractive index n = ?",opts:["sin(r)/sin(i)","sin(i)/sin(r)","cos(i)/cos(r)","tan(i)/tan(r)"],ans:1,exp:"n = sin(i)/sin(r) — Snell's Law."},
+    {q:"TIR requires light to travel from:",opts:["Less dense to denser","Denser to less dense","Air to glass","Any medium"],ans:1,exp:"TIR only occurs when light goes from a denser to a less dense medium."},
+    {q:"Short-sightedness corrected with:",opts:["Convex lens","Concave lens","Plane mirror","Prism"],ans:1,exp:"Concave (diverging) lens corrects myopia."},
+    {q:"Which mirror has a wide field of view?",opts:["Plane","Concave","Convex","Parabolic"],ans:2,exp:"Convex mirrors diverge rays and give a wide field of view."},
+    {q:"Critical angle: sin(C) = ?",opts:["n","1/n","sin(n)","n/sin(i)"],ans:1,exp:"sin(C) = 1/n where n is the refractive index."},
+    {q:"Glass (n=1.5). Critical angle?",opts:["30°","41.8°","48.6°","60°"],ans:1,exp:"sin(C) = 1/1.5 = 0.667. C = 41.8°."},
+    {q:"Concave lens focal length is:",opts:["Positive","Negative","Zero","Infinite"],ans:1,exp:"Concave (diverging) lenses have a negative focal length."},
+    {q:"Which part of the eye controls the amount of light entering?",opts:["Retina","Cornea","Iris","Lens"],ans:2,exp:"The iris controls the diameter of the pupil and thus the amount of light entering."},
+    {q:"Image in a plane mirror is:",opts:["Real and inverted","Virtual, upright, same size","Real, magnified","Virtual, inverted, smaller"],ans:1,exp:"Plane mirror: virtual, upright, same size as object, laterally inverted."},
+    {q:"Fibre optics work because of:",opts:["Refraction","Diffraction","Total internal reflection","Dispersion"],ans:2,exp:"Optical fibres use TIR to carry light along without loss."},
+    {q:"Convex lens object at 2F. Image is:",opts:["Virtual, at F","Real, at 2F, same size","Real, beyond 2F, larger","No image"],ans:1,exp:"Object at 2F → real, inverted, same size image at 2F on other side."},
+    {q:"Light bends towards normal when entering:",opts:["Less dense medium","Same density","Denser medium","Vacuum"],ans:2,exp:"Light bends towards the normal entering a denser medium."},
+    {q:"Camera lens forms an image that is:",opts:["Virtual, upright, magnified","Real, inverted, diminished","Virtual, upright, same size","Real, upright, magnified"],ans:1,exp:"Camera: real, inverted, diminished image on the film/sensor."},
+    {q:"Power of a lens with focal length 0.25 m?",opts:["0.25 D","4 D","25 D","0.04 D"],ans:1,exp:"Power = 1/f = 1/0.25 = 4 Dioptres (D)."},
+    {q:"Dispersion of white light by a prism produces:",opts:["A single colour","ROYGBIV spectrum","Sound waves","Microwaves"],ans:1,exp:"Dispersion splits white light into its component colours (ROYGBIV)."},
+    {q:"Apparent depth of a pool: n = 1.33. Real depth = 3 m. Apparent depth?",opts:["3.99 m","2.26 m","1.33 m","4 m"],ans:1,exp:"Apparent depth = Real depth / n = 3/1.33 = 2.26 m."},
+    {q:"Endoscopes in medicine use:",opts:["X-rays","Radio waves","Optical fibres (TIR)","Gamma rays"],ans:2,exp:"Endoscopes use optical fibres that rely on TIR to carry light inside the body."},
+    {q:"Object inside focal point of convex lens. Image is:",opts:["Real, inverted","Virtual, upright, magnified","Real, same size","No image formed"],ans:1,exp:"Object inside F of convex lens → virtual, upright, magnified image (magnifying glass effect)."},
+    {q:"Telescope objective lens has long focal length to:",opts:["Magnify more","Collect more light","Reduce aberration","All of the above"],ans:1,exp:"Long focal length objective collects more light from distant objects."},
+  ],
+  waves:[
+    {q:"Which wave travels through a vacuum?",opts:["Sound","Water waves","Electromagnetic","Seismic"],ans:2,exp:"EM waves travel at 3×10⁸ m/s through vacuum."},
+    {q:"v = 340 m/s, f = 170 Hz. Wavelength?",opts:["0.5 m","2 m","510 m","1 m"],ans:1,exp:"λ = v/f = 340/170 = 2 m."},
+    {q:"Loudness of sound is related to:",opts:["Frequency","Wavelength","Speed","Amplitude"],ans:3,exp:"Greater amplitude → more energy → louder sound."},
+    {q:"Sound cannot travel through:",opts:["Steel","Water","Air","Vacuum"],ans:3,exp:"Sound is a mechanical wave — it needs a medium."},
+    {q:"Ultrasound frequency:",opts:["< 20 Hz","20–20,000 Hz","> 20,000 Hz","3×10⁸ Hz"],ans:2,exp:"Ultrasound is above 20,000 Hz."},
+    {q:"In refraction, what stays constant?",opts:["Speed","Wavelength","Frequency","Amplitude"],ans:2,exp:"Frequency stays constant during refraction."},
+    {q:"Period T for frequency 4 Hz?",opts:["4 s","0.25 s","0.5 s","8 s"],ans:1,exp:"T = 1/f = 1/4 = 0.25 s."},
+    {q:"Gamma rays have the highest:",opts:["Wavelength","Speed","Frequency","Amplitude"],ans:2,exp:"Gamma rays have highest frequency in the EM spectrum."},
+    {q:"Sound travels fastest in:",opts:["Air","Water","Vacuum","Solids"],ans:3,exp:"Sound travels fastest in solids where particles are closest."},
+    {q:"SONAR uses:",opts:["Light waves","Radio waves","Ultrasound","Gamma rays"],ans:2,exp:"SONAR uses ultrasound pulses and times their echoes."},
+    {q:"In a transverse wave, vibration is:",opts:["Parallel to wave travel","Perpendicular to wave travel","At 45° to wave travel","Circular"],ans:1,exp:"Transverse waves: vibration is perpendicular (at right angles) to direction of travel."},
+    {q:"Which EM wave has the longest wavelength?",opts:["Gamma rays","X-rays","Visible light","Radio waves"],ans:3,exp:"Radio waves have the longest wavelength and lowest frequency in the EM spectrum."},
+    {q:"Echo method: v = ?",opts:["d/t","2d/t","d/2t","4d/t"],ans:1,exp:"v = 2d/t because sound travels to the wall and back (twice the distance)."},
+    {q:"Standing wave is formed by:",opts:["One wave only","Two identical waves in opposite directions","Waves of different frequencies","Refracted waves"],ans:1,exp:"Standing waves form when two identical waves travel in opposite directions and superpose."},
+    {q:"Infrasound frequency:",opts:["< 20 Hz","20–20,000 Hz","> 20,000 Hz","3×10⁸ Hz"],ans:0,exp:"Infrasound is below 20 Hz — below human hearing range."},
+    {q:"Microwave ovens use which EM wave?",opts:["Infrared","UV","Microwaves","Radio waves"],ans:2,exp:"Microwave ovens use microwaves to heat water molecules in food."},
+    {q:"The speed of all EM waves in vacuum is:",opts:["340 m/s","1500 m/s","3×10⁸ m/s","3×10¹⁰ m/s"],ans:2,exp:"All EM waves travel at c = 3 × 10⁸ m/s in vacuum."},
+    {q:"What causes refraction of waves?",opts:["Change in frequency","Change in speed","Change in amplitude","Change in direction only"],ans:1,exp:"Refraction is caused by a change in wave speed when passing from one medium to another."},
+    {q:"Music note A4 has f = 440 Hz. Speed in air = 340 m/s. Wavelength?",opts:["0.77 m","1.29 m","440 m","0.13 m"],ans:0,exp:"λ = v/f = 340/440 = 0.77 m."},
+    {q:"X-rays are used in:",opts:["Cooking food","Seeing inside the body","TV broadcasting","Heating rooms"],ans:1,exp:"X-rays penetrate soft tissue but are absorbed by denser bones, enabling medical imaging."},
+  ]
+};
+
+let activeQuiz=null,qIdx=0,qScore=0,qAnswered=false,qTimer=null,qSecs=0;
+
+function startQuiz(topic){
+  activeQuiz=topic;qIdx=0;qScore=0;qAnswered=false;qSecs=0;
+  document.getElementById('quiz-select').style.display='none';
+  document.getElementById('quiz-active').style.display='block';
+  document.getElementById('quiz-active-t').textContent={mechanics:'⚙️ Mechanics Quiz',optics:'🔭 Optics Quiz',waves:'🌊 Waves Quiz'}[topic];
+  document.getElementById('qz-final').style.display='none';
+  document.getElementById('qz-box').style.display='block';
+  renderQ();
+  if(qTimer)clearInterval(qTimer);
+  qTimer=setInterval(()=>{qSecs++;const m=Math.floor(qSecs/60),s=qSecs%60;const el=document.getElementById('quiz-timer');if(el){el.textContent='⏱ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');el.className='timer'+(qSecs>600?' danger':'');}},1000);
+}
+function endQuiz(){
+  clearInterval(qTimer);activeQuiz=null;
+  document.getElementById('quiz-select').style.display='block';
+  document.getElementById('quiz-active').style.display='none';
+}
+function renderQ(){
+  const qs=QUIZ_BANKS[activeQuiz],q=qs[qIdx];qAnswered=false;
+  document.getElementById('qz-fill').style.width=(qIdx/qs.length*100)+'%';
+  document.getElementById('qz-counter').textContent='Q '+(qIdx+1)+' of '+qs.length;
+  document.getElementById('qz-score').textContent='Score: '+qScore;
+  document.getElementById('qz-next').style.display='none';
+  document.getElementById('qz-box').innerHTML=`<div class="q-q">${q.q}</div><div class="q-opts">`+
+    q.opts.map((o,i)=>`<button class="q-opt" onclick="answerQ(${i})">${o}</button>`).join('')+
+    `</div><div class="q-fb" id="qz-fb"></div>`;
+}
+function answerQ(i){
+  if(qAnswered)return;qAnswered=true;
+  const q=QUIZ_BANKS[activeQuiz][qIdx];const correct=i===q.ans;
+  if(correct)qScore++;
+  const opts=document.querySelectorAll('#qz-box .q-opt');
+  opts[i].classList.add(correct?'correct':'wrong');
+  if(!correct)opts[q.ans].classList.add('correct');
+  opts.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('qz-fb');
+  if(fb){fb.textContent=q.exp;fb.className='q-fb show '+(correct?'ok':'no');}
+  document.getElementById('qz-fill').style.width=((qIdx+1)/QUIZ_BANKS[activeQuiz].length*100)+'%';
+  const nb=document.getElementById('qz-next');
+  nb.style.display='inline-block';nb.textContent=qIdx<QUIZ_BANKS[activeQuiz].length-1?'Next Question →':'See Results 🏆';
+}
+function quizNext(){
+  if(qIdx<QUIZ_BANKS[activeQuiz].length-1){qIdx++;renderQ();}
+  else showQuizFinal();
+}
+function showQuizFinal(){
+  clearInterval(qTimer);
+  document.getElementById('qz-box').style.display='none';
+  document.getElementById('qz-next').style.display='none';
+  const total=QUIZ_BANKS[activeQuiz].length,pct=Math.round(qScore/total*100);
+  const grade=pct>=80?'Outstanding! 🏆':pct>=60?'Well done! 🎉':pct>=40?'Good effort! 👍':'Keep practising! 📚';
+  const color=pct>=80?'var(--green)':pct>=60?'var(--blue)':pct>=40?'var(--amber)':'var(--red)';
+  const m=Math.floor(qSecs/60),s=qSecs%60;
+  const fin=document.getElementById('qz-final');
+  fin.style.display='block';
+  fin.innerHTML=`<div class="q-final">
+    <div style="font-size:56px;margin-bottom:14px;">${pct>=60?'🏆':'📚'}</div>
+    <div style="font-size:20px;font-weight:700;color:${color};margin-bottom:8px;">${grade}</div>
+    <div style="font-size:38px;font-weight:900;color:var(--blue);font-family:var(--font-display);">${qScore}/${total}</div>
+    <div style="font-size:14px;color:var(--text2);margin-top:6px;">${pct}% &nbsp;|&nbsp; Time: ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
+      <button class="btn-pr" onclick="startQuiz('${activeQuiz}')">🔁 Try Again</button>
+      <button class="btn-ol" onclick="endQuiz()">← All Quizzes</button>
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════
+   NOTES
+════════════════════════════════ */
+function saveNotes(){
+  const ta=document.getElementById('notes-ta');
+  localStorage.setItem('phys-notes',ta.value);
+  document.getElementById('notes-st').textContent='Saved at '+new Date().toLocaleTimeString();
+}
+function printNotes(){window.print();}
+function clearNotes(){if(confirm('Clear all notes?')){document.getElementById('notes-ta').value='';localStorage.removeItem('phys-notes');document.getElementById('notes-st').textContent='Notes cleared.';}}
+(function(){
+  const ta=document.getElementById('notes-ta');
+  if(ta&&localStorage.getItem('phys-notes'))ta.value=localStorage.getItem('phys-notes');
+  setInterval(()=>{
+    if(ta&&ta.value){localStorage.setItem('phys-notes',ta.value);document.getElementById('notes-st').textContent='Auto-saved at '+new Date().toLocaleTimeString();}
+  },10000);
+})();
+</script>
+</body>
+</html>
